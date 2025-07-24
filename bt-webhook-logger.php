@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: BT WebHook Logger
-Description: 接收宝塔面板 WebHook，把请求体写入数据库，并在后台查看。支持 JSON 和 x-www-form-urlencoded 格式的自动解析。
-Version:     1.5
+Plugin Name: BT WebHook Logger (CPT Version)
+Description: 接收宝塔面板 WebHook，把请求体写入数据库，并在后台查看。使用自定义文章类型存储日志。
+Version:     2.0
 Author:      Your Name
 */
 
@@ -11,13 +11,14 @@ if (!defined('ABSPATH')) exit;
 /**
  * BT WebHook Logger 主类
  * 封装所有插件功能，避免全局命名空间污染。
+ * 使用自定义文章类型 (CPT) 存储日志。
  */
 class BT_WebHook_Logger {
 
 	/**
-	 * @var string 数据库表名
+	 * @var string 自定义文章类型 slug
 	 */
-	private $table_name;
+	private $post_type = 'bt_webhook_log';
 
 	/**
 	 * @var string 插件选项名称 for access_key
@@ -28,11 +29,8 @@ class BT_WebHook_Logger {
 	 * 构造函数：初始化插件并注册所有钩子。
 	 */
 	public function __construct() {
-		global $wpdb;
-		$this->table_name = $wpdb->prefix . 'btwl_logs';
-
-		// 注册激活钩子
-		register_activation_hook(__FILE__, array($this, 'activate'));
+		// 注册 CPT
+		add_action('init', array($this, 'register_webhook_log_cpt'));
 
 		// 注册 WebHook 接收端
 		add_action('parse_request', array($this, 'handle_webhook'));
@@ -49,23 +47,44 @@ class BT_WebHook_Logger {
 	}
 
 	/**
-	 * 插件激活时创建数据表。
+	 * 注册自定义文章类型 'bt_webhook_log'。
 	 */
-	public function activate() {
-		global $wpdb;
-		$charset_collate = $wpdb->get_charset_collate();
+	public function register_webhook_log_cpt() {
+		$labels = array(
+			'name'          => 'WebHook 日志',
+			'singular_name' => 'WebHook 日志',
+			'menu_name'     => 'WebHook 日志',
+			'all_items'     => '所有日志',
+			'add_new'       => '添加新日志', // 不会实际用到，但需要定义
+			'add_new_item'  => '添加新日志',
+			'edit_item'     => '编辑日志',
+			'new_item'      => '新日志',
+			'view_item'     => '查看日志',
+			'search_items'  => '搜索日志',
+			'not_found'     => '没有找到日志',
+			'not_found_in_trash' => '回收站中没有找到日志',
+			'parent_item_colon' => '父日志:',
+		);
 
-		$sql = "CREATE TABLE IF NOT EXISTS {$this->table_name} (
-			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-			time datetime DEFAULT CURRENT_TIMESTAMP,
-			ip varchar(64) DEFAULT '',
-			body longtext,
-			format varchar(20) DEFAULT '',
-			PRIMARY KEY (id)
-		) $charset_collate;";
+		$args = array(
+			'labels'              => $labels,
+			'public'              => false, // 不对外公开
+			'publicly_queryable'  => false, // 不可通过 URL 直接查询
+			'show_ui'             => false, // 不在后台显示独立的菜单项（我们有自己的日志页面）
+			'show_in_menu'        => false, // 不在后台显示独立的菜单项
+			'query_var'           => false, // 不作为查询变量
+			'rewrite'             => false, // 不重写 URL
+			'capability_type'     => 'post',
+			'has_archive'         => false, // 没有归档页面
+			'hierarchical'        => false, // 非层级结构
+			'menu_position'       => null,
+			'supports'            => array('title', 'custom-fields'), // 支持标题和自定义字段
+			'can_export'          => true, // 可以导出
+			'delete_with_user'    => false, // 不随用户删除而删除
+			'exclude_from_search' => true, // 不在站点搜索中显示
+		);
 
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta($sql);
+		register_post_type($this->post_type, $args);
 	}
 
 	/**
@@ -93,7 +112,6 @@ class BT_WebHook_Logger {
 			}
 		}
 
-		global $wpdb;
 		$request_body = file_get_contents('php://input');
 		$content_type = $_SERVER['CONTENT_TYPE'] ?? '';
 		$data_format = 'raw'; // 默认格式为 'raw'
@@ -115,16 +133,21 @@ class BT_WebHook_Logger {
 			}
 		}
 
-		// 保存数据到数据库
-		$wpdb->insert(
-			$this->table_name,
-			[
-				'ip'    => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '',
-				'body'  => $request_body,
-				'format' => $data_format,
-			],
-			['%s', '%s', '%s']
-		);
+		// 插入为自定义文章类型
+		$post_id = wp_insert_post(array(
+			'post_type'     => $this->post_type,
+			'post_title'    => 'WebHook Log ' . current_time('mysql'), // 简单标题
+			'post_status'   => 'publish',
+			'post_date'     => current_time('mysql'),
+			'post_date_gmt' => current_time('mysql', 1),
+		));
+
+		if ($post_id) {
+			// 保存日志数据为文章元数据 (post meta)
+			update_post_meta($post_id, '_btwl_ip', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '');
+			update_post_meta($post_id, '_btwl_body', $request_body);
+			update_post_meta($post_id, '_btwl_format', $data_format);
+		}
 
 		// 返回宝塔面板需要的成功响应
 		header('Content-Type: application/json; charset=utf-8');
@@ -164,8 +187,22 @@ class BT_WebHook_Logger {
 		if (isset($_POST['btwl_clear_logs']) && current_user_can('manage_options')) {
 			check_admin_referer('btwl_clear_logs_nonce');
 
-			global $wpdb;
-			$wpdb->query("TRUNCATE TABLE {$this->table_name}");
+			// 获取所有指定 CPT 的 ID 并逐一删除
+			$args = array(
+				'post_type'      => $this->post_type,
+				'posts_per_page' => -1, // 获取所有日志
+				'fields'         => 'ids', // 只获取文章 ID
+				'post_status'    => 'any', // 包括所有状态的日志
+				'no_found_rows'  => true, // 优化查询，不计算总行数
+			);
+			$query = new WP_Query($args);
+
+			if ($query->have_posts()) {
+				foreach ($query->posts as $post_id) {
+					// 强制删除，绕过回收站
+					wp_delete_post($post_id, true);
+				}
+			}
 
 			// 添加管理通知
 			add_settings_error(
@@ -202,7 +239,8 @@ class BT_WebHook_Logger {
 	 * 从外部文件加载模板。
 	 */
 	public function display_logs_page() {
-		// 使用 plugin_dir_path(__FILE__) 获取插件的绝对路径，更安全可靠
+		// 将 CPT 类型传递给模板，以便其查询
+		$post_type = $this->post_type;
 		require_once plugin_dir_path(__FILE__) . 'logs-page.php';
 	}
 

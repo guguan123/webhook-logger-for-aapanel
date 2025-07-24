@@ -1,26 +1,32 @@
 <?php
 /**
  * logs-page.php
- * BT WebHook 日志展示页面
+ * BT WebHook 日志展示页面 (CPT 版本)
  */
 
 // 防止直接访问此文件
 if (!defined('ABSPATH')) exit;
 
-global $wpdb;
-$table = $wpdb->prefix . 'btwl_logs';
+// 注意：$post_type 变量是从主插件文件传递过来的局部变量，无需声明为 global。
+// $post_type; // 这一行被移除
+
 $page  = max(1, intval($_GET['paged'] ?? 1)); // 获取当前页码
 $limit = 20; // 每页显示数量
 $offset = ($page - 1) * $limit; // 计算偏移量
 
-// 从数据库获取日志记录
-$rows  = $wpdb->get_results($wpdb->prepare(
-	"SELECT * FROM $table ORDER BY id DESC LIMIT %d OFFSET %d",
-	$limit,
-	$offset
-));
-// 获取总记录数
-$total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
+// 使用 WP_Query 查询自定义文章类型
+$args = array(
+	'post_type'      => $post_type, // 现在 $post_type 会正确地从父作用域获取值
+	'posts_per_page' => $limit,
+	'paged'          => $page,
+	'post_status'    => 'publish', // 只获取已发布的日志
+	'order'          => 'DESC',
+	'orderby'        => 'date',
+);
+$log_query = new WP_Query($args);
+
+$rows = $log_query->posts; // 获取文章对象数组
+$total = $log_query->found_posts; // 获取总日志数（用于分页）
 ?>
 <div class="wrap">
 	<h1>BT WebHook 日志</h1>
@@ -44,15 +50,20 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 			</tr>
 		</thead>
 		<tbody>
-		<?php if (!empty($rows)) : ?>
-			<?php foreach ($rows as $row): ?>
+		<?php if ($log_query->have_posts()) : ?>
+			<?php foreach ($rows as $post):
+				// 从文章元数据中获取日志详情
+				$log_ip = get_post_meta($post->ID, '_btwl_ip', true);
+				$log_body = get_post_meta($post->ID, '_btwl_body', true);
+				$log_format = get_post_meta($post->ID, '_btwl_format', true);
+			?>
 				<tr>
-					<td><?php echo esc_html($row->time); ?></td>
-					<td><?php echo esc_html($row->ip); ?></td>
-					<td><?php echo esc_html($row->format); ?></td>
+					<td><?php echo esc_html($post->post_date); ?></td>
+					<td><?php echo esc_html($log_ip); ?></td>
+					<td><?php echo esc_html($log_format); ?></td>
 					<td>
 						<!-- 使用 pre 标签保留格式，并添加样式控制显示 -->
-						<pre style="white-space: pre-wrap; word-break: break-all; margin: 0; padding: 5px; background: #f9f9f9; border: 1px solid #eee; overflow: auto; max-height: 200px;"><?php echo esc_html($row->body); ?></pre>
+						<pre style="white-space: pre-wrap; word-break: break-all; margin: 0; padding: 5px; background: #f9f9f9; border: 1px solid #eee; overflow: auto; max-height: 200px;"><?php echo esc_html($log_body); ?></pre>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -65,7 +76,8 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 	</table>
 	<?php
 	// 简单分页导航
-	$max = ceil($total / $limit);
+	// 使用 $log_query->max_num_pages 获取总页数
+	$max = $log_query->max_num_pages;
 	if ($max > 1) {
 		echo '<div class="tablenav"><div class="tablenav-pages">';
 		echo paginate_links([
