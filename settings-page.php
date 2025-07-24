@@ -7,8 +7,10 @@
 // 防止直接访问此文件
 if (!defined('ABSPATH')) exit;
 
-// 获取当前保存的 Access Key
-$current_access_key = get_option('btwl_access_key', '');
+// 获取当前保存的 Access Key 和邮件设置
+$current_access_key = get_option($this->option_access_key, '');
+$current_enable_email = get_option($this->option_enable_email, '0'); // 默认为禁用
+$current_target_email = get_option($this->option_target_email, '');
 ?>
 <div class="wrap">
 	<h1>BT WebHook 设置</h1>
@@ -24,6 +26,26 @@ $current_access_key = get_option('btwl_access_key', '');
 					<p class="description">例如：`<?php echo esc_url(site_url('/?btwebhook=1&access_key=your_secret_key')); ?>`</p>
 					<?php if (empty($current_access_key)) : ?>
 						<p class="description" style="color: red;">当前未设置 Access Key，WebHook 地址对所有请求开放，存在安全风险。</p>
+					<?php endif; ?>
+				</td>
+			</tr>
+			<tr class="btwl-settings-section">
+				<th scope="row">邮件通知</th>
+				<td>
+					<label for="btwl_enable_email">
+						<input type="checkbox" id="btwl_enable_email" name="btwl_enable_email" value="1" <?php checked('1', $current_enable_email); ?>>
+						启用 WebHook 邮件通知
+					</label>
+					<p class="description">勾选此项以在每次收到 WebHook 时发送邮件通知。</p>
+				</td>
+			</tr>
+			<tr class="btwl-settings-section">
+				<th scope="row"><label for="btwl_target_email">目标邮箱地址</label></th>
+				<td>
+					<input type="email" id="btwl_target_email" name="btwl_target_email" value="<?php echo esc_attr($current_target_email); ?>" class="regular-text">
+					<p class="description">接收 WebHook 通知邮件的邮箱地址。请确保您的 WordPress 已正确配置邮件发送服务。</p>
+					<?php if (!empty($current_enable_email) && !is_email($current_target_email)) : ?>
+						<p class="description" style="color: red;">邮件通知已启用，但目标邮箱地址无效，请检查。</p>
 					<?php endif; ?>
 				</td>
 			</tr>
@@ -55,7 +77,8 @@ $current_access_key = get_option('btwl_access_key', '');
 	.form-table th {
 		width: 150px; /* 调整标签列的宽度 */
 	}
-	.form-table input[type="text"] {
+	.form-table input[type="text"],
+	.form-table input[type="email"] { /* 为 email 类型也添加样式 */
 		width: 100%; /* 输入框填充可用宽度 */
 		max-width: 400px; /* 设置最大宽度 */
 	}

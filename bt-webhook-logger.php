@@ -2,7 +2,7 @@
 /*
 Plugin Name: BT WebHook Logger (CPT Version)
 Description: 接收宝塔面板 WebHook，把请求体写入数据库，并在后台查看。使用自定义文章类型存储日志。
-Version:     2.0
+Version:     2.1
 Author:      Your Name
 */
 
@@ -26,6 +26,16 @@ class BT_WebHook_Logger {
 	private $option_access_key = 'btwl_access_key';
 
 	/**
+	 * @var string 插件选项名称 for enable email notification
+	 */
+	private $option_enable_email = 'btwl_enable_email';
+
+	/**
+	 * @var string 插件选项名称 for target email address
+	 */
+	private $option_target_email = 'btwl_target_email';
+
+	/**
 	 * 构造函数：初始化插件并注册所有钩子。
 	 */
 	public function __construct() {
@@ -43,7 +53,7 @@ class BT_WebHook_Logger {
 		add_action('admin_init', array($this, 'handle_settings_save'));
 
 		// 确保管理通知能正常显示
-		add_action('admin_notices', 'settings_errors');
+		//add_action('admin_notices', 'settings_errors');
 	}
 
 	/**
@@ -115,44 +125,86 @@ class BT_WebHook_Logger {
 		$request_body = file_get_contents('php://input');
 		$content_type = $_SERVER['CONTENT_TYPE'] ?? '';
 		$data_format = 'raw'; // 默认格式为 'raw'
+		$request_ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
+		$request_time = current_time('mysql');
 
 		// 尝试解析 JSON 格式
 		if (strpos($content_type, 'application/json') !== false) {
 			$decoded_body = json_decode($request_body, true);
 			if (json_last_error() === JSON_ERROR_NONE) {
-				$request_body = json_encode($decoded_body, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+				$request_body_formatted = json_encode($decoded_body, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 				$data_format = 'json';
+			} else {
+				$request_body_formatted = $request_body; // JSON 解析失败，保存原始数据
 			}
 		}
 		// 尝试解析 x-www-form-urlencoded 格式
 		else if (strpos($content_type, 'application/x-www-form-urlencoded') !== false) {
 			parse_str($request_body, $decoded_body);
 			if (!empty($decoded_body)) {
-				$request_body = print_r($decoded_body, true);
+				$request_body_formatted = print_r($decoded_body, true);
 				$data_format = 'urlencoded';
+			} else {
+				$request_body_formatted = $request_body; // URL-encoded 解析失败，保存原始数据
 			}
+		} else {
+			$request_body_formatted = $request_body; // 其他格式或无 Content-Type，保存原始数据
 		}
 
 		// 插入为自定义文章类型
 		$post_id = wp_insert_post(array(
 			'post_type'     => $this->post_type,
-			'post_title'    => 'WebHook Log ' . current_time('mysql'), // 简单标题
+			'post_title'    => 'WebHook Log ' . $request_time . ' from ' . $request_ip, // 更详细的标题
 			'post_status'   => 'publish',
-			'post_date'     => current_time('mysql'),
+			'post_date'     => $request_time,
 			'post_date_gmt' => current_time('mysql', 1),
 		));
 
 		if ($post_id) {
 			// 保存日志数据为文章元数据 (post meta)
-			update_post_meta($post_id, '_btwl_ip', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '');
-			update_post_meta($post_id, '_btwl_body', $request_body);
+			update_post_meta($post_id, '_btwl_ip', $request_ip);
+			update_post_meta($post_id, '_btwl_body', $request_body_formatted);
 			update_post_meta($post_id, '_btwl_format', $data_format);
 		}
+
+		// 发送邮件通知（如果启用）
+		$this->send_email_notification($request_ip, $data_format, $request_body_formatted, $request_time);
 
 		// 返回宝塔面板需要的成功响应
 		header('Content-Type: application/json; charset=utf-8');
 		echo '{"code": 1}';
 		exit;
+	}
+
+	/**
+	 * 发送邮件通知。
+	 *
+	 * @param string $ip 请求IP。
+	 * @param string $format 请求格式。
+	 * @param string $body 请求体内容。
+	 * @param string $time 请求时间。
+	 */
+	private function send_email_notification($ip, $format, $body, $time) {
+		$enable_email = get_option($this->option_enable_email, '0');
+		$target_email = get_option($this->option_target_email, '');
+
+		// 检查是否启用邮件通知且目标邮箱有效
+		if ('1' === $enable_email && is_email($target_email)) {
+			$subject = 'BT WebHook Logger: New WebHook Received (' . $format . ')';
+
+			$message = "收到新的宝塔 WebHook 日志：\n\n";
+			$message .= "时间: " . $time . "\n";
+			$message .= "来源 IP: " . $ip . "\n";
+			$message .= "格式: " . $format . "\n";
+			$message .= "请求体:\n" . $body . "\n\n";
+			$message .= "请登录WordPress后台查看更多详情。\n";
+			$message .= "日志页面: " . admin_url('tools.php?page=btwl-logs') . "\n";
+
+			// 设置邮件头，确保内容类型为纯文本
+			$headers = array('Content-Type: text/plain; charset=UTF-8');
+
+			wp_mail($target_email, $subject, $message, $headers);
+		}
 	}
 
 	/**
@@ -221,8 +273,16 @@ class BT_WebHook_Logger {
 		if (isset($_POST['btwl_save_settings']) && current_user_can('manage_options')) {
 			check_admin_referer('btwl_settings_nonce');
 
+			// 保存 Access Key
 			$new_access_key = sanitize_text_field($_POST['btwl_access_key']);
 			update_option($this->option_access_key, $new_access_key);
+
+			// 保存邮件通知设置
+			$enable_email = isset($_POST['btwl_enable_email']) ? '1' : '0';
+			update_option($this->option_enable_email, $enable_email);
+
+			$target_email = sanitize_email($_POST['btwl_target_email']);
+			update_option($this->option_target_email, $target_email);
 
 			// 添加管理通知
 			add_settings_error(
@@ -239,7 +299,6 @@ class BT_WebHook_Logger {
 	 * 从外部文件加载模板。
 	 */
 	public function display_logs_page() {
-		// 将 CPT 类型传递给模板，以便其查询
 		require_once plugin_dir_path(__FILE__) . 'logs-page.php';
 	}
 
