@@ -40,9 +40,8 @@ function btwl_handle_webhook($wp) {
 	if (!empty($configured_access_key)) {
 		$request_access_key = $_GET['access_key'] ?? '';
 		if ($request_access_key !== $configured_access_key) {
-			// 验证失败，返回错误信息并退出
-			header('Content-Type: application/json; charset=utf-8');
-			echo '{"code": 0, "msg": "Access Denied: Invalid access_key"}';
+			// 验证失败，返回403并退出
+			http_response_code(403);
 			exit;
 		}
 	}
@@ -136,20 +135,19 @@ function btwl_handle_settings_save() {
 		update_option('btwl_access_key', $new_access_key);
 
 		add_action('admin_notices', function() {
-			echo '<div class="notice notice-success is-dismissible"><p>设置已保存！</p></div>';
-				add_settings_error(
-					'bt-webhook-logger-messages',
-					'setting-save',
-					'设置已保存！',
-					'success'
-				);
+			add_settings_error(
+				'bt-webhook-logger-messages',
+				'setting-save',
+				'设置已保存！',
+				'success'
+			);
 		});
 	}
 }
 
 // 后台日志页面
 function btwl_logs_page() {
-	require_once 'logs_page.php';
+	require_once 'logs-page.php';
 }
 
 // 后台设置页面

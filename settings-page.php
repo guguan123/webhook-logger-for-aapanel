@@ -1,6 +1,10 @@
 <?php
-if (!defined('ABSPATH')) exit; // 防止直接访问
+/**
+ * settings-page.php
+ * BT WebHook 设置页
+ */
 
+if (!defined('ABSPATH')) exit; // 防止直接访问
 $current_access_key = get_option('btwl_access_key', '');
 ?>
 <div class="wrap">

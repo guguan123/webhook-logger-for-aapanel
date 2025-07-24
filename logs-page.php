@@ -1,6 +1,11 @@
 <?php
-if (!defined('ABSPATH')) exit; // 防止直接访问
+/**
+ * logs-page.php
+ * BT WebHook 日志展示页面
+ */
 
+
+if (!defined('ABSPATH')) exit; // 防止直接访问
 global $wpdb;
 $table = $wpdb->prefix . 'btwl_logs';
 $page  = max(1, intval($_GET['paged'] ?? 1));
