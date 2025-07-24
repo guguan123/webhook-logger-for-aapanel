@@ -4,14 +4,17 @@
  * BT WebHook 设置页
  */
 
-if (!defined('ABSPATH')) exit; // 防止直接访问
+// 防止直接访问此文件
+if (!defined('ABSPATH')) exit;
+
+// 获取当前保存的 Access Key
 $current_access_key = get_option('btwl_access_key', '');
 ?>
 <div class="wrap">
 	<h1>BT WebHook 设置</h1>
 
 	<form method="post">
-		<?php wp_nonce_field('btwl_settings_nonce'); ?>
+		<?php wp_nonce_field('btwl_settings_nonce'); // Nonce 字段用于安全验证 ?>
 		<table class="form-table">
 			<tr class="btwl-settings-section">
 				<th scope="row"><label for="btwl_access_key">Access Key</label></th>
@@ -27,11 +30,16 @@ $current_access_key = get_option('btwl_access_key', '');
 		</table>
 		<p class="submit">
 			<input type="submit" name="btwl_save_settings" id="submit" class="button button-primary" value="保存设置">
+			<!-- 按钮点击时调用 JavaScript 函数生成随机密钥 -->
 			<button type="button" class="button button-secondary" onclick="document.getElementById('btwl_access_key').value = generateRandomKey();">生成随机密钥</button>
 		</p>
 	</form>
 </div>
 <script>
+	/**
+	 * 生成一个指定长度的随机字符串作为密钥
+	 * @returns {string} 随机密钥字符串
+	 */
 	function generateRandomKey() {
 		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 		let result = '';
@@ -42,3 +50,19 @@ $current_access_key = get_option('btwl_access_key', '');
 		return result;
 	}
 </script>
+<style>
+	/* 表单表格的样式调整 */
+	.form-table th {
+		width: 150px; /* 调整标签列的宽度 */
+	}
+	.form-table input[type="text"] {
+		width: 100%; /* 输入框填充可用宽度 */
+		max-width: 400px; /* 设置最大宽度 */
+	}
+	/* 描述文本的样式 */
+	.btwl-settings-section p.description {
+		font-style: italic;
+		color: #666;
+		margin-top: 5px;
+	}
+</style>

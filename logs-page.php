@@ -4,18 +4,22 @@
  * BT WebHook 日志展示页面
  */
 
+// 防止直接访问此文件
+if (!defined('ABSPATH')) exit;
 
-if (!defined('ABSPATH')) exit; // 防止直接访问
 global $wpdb;
 $table = $wpdb->prefix . 'btwl_logs';
-$page  = max(1, intval($_GET['paged'] ?? 1));
-$limit = 20; // 调整每页显示数量，避免过长
-$offset = ($page - 1) * $limit;
+$page  = max(1, intval($_GET['paged'] ?? 1)); // 获取当前页码
+$limit = 20; // 每页显示数量
+$offset = ($page - 1) * $limit; // 计算偏移量
+
+// 从数据库获取日志记录
 $rows  = $wpdb->get_results($wpdb->prepare(
 	"SELECT * FROM $table ORDER BY id DESC LIMIT %d OFFSET %d",
 	$limit,
 	$offset
 ));
+// 获取总记录数
 $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 ?>
 <div class="wrap">
@@ -23,6 +27,7 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 
 	<div class="btwl-toolbar">
 		<p>共 <?php echo $total; ?> 条记录</p>
+		<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
 		<form method="post" onsubmit="return confirm('确定要清空所有 WebHook 日志吗？此操作不可逆！');">
 			<?php wp_nonce_field('btwl_clear_logs_nonce'); ?>
 			<input type="submit" name="btwl_clear_logs" class="button button-danger" value="清空所有记录">
@@ -46,6 +51,7 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 					<td><?php echo esc_html($row->ip); ?></td>
 					<td><?php echo esc_html($row->format); ?></td>
 					<td>
+						<!-- 使用 pre 标签保留格式，并添加样式控制显示 -->
 						<pre style="white-space: pre-wrap; word-break: break-all; margin: 0; padding: 5px; background: #f9f9f9; border: 1px solid #eee; overflow: auto; max-height: 200px;"><?php echo esc_html($row->body); ?></pre>
 					</td>
 				</tr>
@@ -58,17 +64,17 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 		</tbody>
 	</table>
 	<?php
-	// 简单分页
+	// 简单分页导航
 	$max = ceil($total / $limit);
 	if ($max > 1) {
 		echo '<div class="tablenav"><div class="tablenav-pages">';
 		echo paginate_links([
-			'base'    => add_query_arg('paged', '%#%'),
+			'base'    => add_query_arg('paged', '%#%'), // 分页链接的基础 URL
 			'format'  => '',
 			'current' => $page,
 			'total'   => $max,
-			'prev_text' => '&laquo;',
-			'next_text' => '&raquo;',
+			'prev_text' => '&laquo;', // 上一页文本
+			'next_text' => '&raquo;', // 下一页文本
 		]);
 		echo '</div></div>';
 	}
@@ -80,6 +86,7 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 		font-size: 13px;
 		line-height: 1.5;
 	}
+	/* 工具栏样式，用于布局日志总数和清空按钮 */
 	.btwl-toolbar {
 		display: flex;
 		justify-content: space-between;
@@ -89,6 +96,7 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 	.btwl-toolbar p {
 		margin: 0;
 	}
+	/* 危险按钮样式，用于清空操作 */
 	.button-danger {
 		background: #dc3232;
 		border-color: #dc3232;
@@ -101,17 +109,5 @@ $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
 		background: #e35a5a;
 		border-color: #e35a5a;
 		color: #fff;
-	}
-	.form-table th {
-		width: 150px; /* 调整标签列的宽度 */
-	}
-	.form-table input[type="text"] {
-		width: 100%; /* 输入框填充可用宽度 */
-		max-width: 400px; /* 设置最大宽度 */
-	}
-	.btwl-settings-section p {
-		font-style: italic;
-		color: #666;
-		margin-top: 5px;
 	}
 </style>
