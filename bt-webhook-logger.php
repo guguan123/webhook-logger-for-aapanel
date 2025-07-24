@@ -2,7 +2,7 @@
 /*
 Plugin Name: BT WebHook Logger (CPT Version)
 Description: 接收宝塔面板 WebHook，把请求体写入数据库，并在后台查看。使用自定义文章类型存储日志。
-Version:     2.1
+Version:     2.2
 Author:      Your Name
 */
 
@@ -132,24 +132,17 @@ class BT_WebHook_Logger {
 		if (strpos($content_type, 'application/json') !== false) {
 			$decoded_body = json_decode($request_body, true);
 			if (json_last_error() === JSON_ERROR_NONE) {
-				$request_body_formatted = json_encode($decoded_body, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 				$data_format = 'json';
-			} else {
-				$request_body_formatted = $request_body; // JSON 解析失败，保存原始数据
 			}
 		}
 		// 尝试解析 x-www-form-urlencoded 格式
 		else if (strpos($content_type, 'application/x-www-form-urlencoded') !== false) {
 			parse_str($request_body, $decoded_body);
 			if (!empty($decoded_body)) {
-				$request_body_formatted = print_r($decoded_body, true);
 				$data_format = 'urlencoded';
-			} else {
-				$request_body_formatted = $request_body; // URL-encoded 解析失败，保存原始数据
 			}
-		} else {
-			$request_body_formatted = $request_body; // 其他格式或无 Content-Type，保存原始数据
 		}
+		// 如果没有成功解析为 JSON 或 URL-encoded，则保持为 raw 格式
 
 		// 插入为自定义文章类型
 		$post_id = wp_insert_post(array(
@@ -163,12 +156,15 @@ class BT_WebHook_Logger {
 		if ($post_id) {
 			// 保存日志数据为文章元数据 (post meta)
 			update_post_meta($post_id, '_btwl_ip', $request_ip);
-			update_post_meta($post_id, '_btwl_body', $request_body_formatted);
+			update_post_meta($post_id, '_btwl_body', $request_body);
 			update_post_meta($post_id, '_btwl_format', $data_format);
 		}
 
-		// 发送邮件通知（如果启用）
-		$this->send_email_notification($request_ip, $data_format, $request_body_formatted, $request_time);
+		// 检查是否启用邮件通知
+		if (get_option($this->option_enable_email, '0') == 1) {
+			// 发送邮件通知（如果启用）
+			$this->send_email_notification($request_ip, $data_format, $request_body, $request_time);
+		}
 
 		// 返回宝塔面板需要的成功响应
 		header('Content-Type: application/json; charset=utf-8');
@@ -185,18 +181,42 @@ class BT_WebHook_Logger {
 	 * @param string $time 请求时间。
 	 */
 	private function send_email_notification($ip, $format, $body, $time) {
-		$enable_email = get_option($this->option_enable_email, '0');
 		$target_email = get_option($this->option_target_email, '');
 
-		// 检查是否启用邮件通知且目标邮箱有效
-		if ('1' === $enable_email && is_email($target_email)) {
+		// 检查目标邮箱是否有效
+		if (is_email($target_email)) {
 			$subject = 'BT WebHook Logger: New WebHook Received (' . $format . ')';
 
 			$message = "收到新的宝塔 WebHook 日志：\n\n";
 			$message .= "时间: " . $time . "\n";
 			$message .= "来源 IP: " . $ip . "\n";
 			$message .= "格式: " . $format . "\n";
-			$message .= "请求体:\n" . $body . "\n\n";
+
+
+			if ($format == 'json') {
+				$decoded_body = json_encode(json_decode($body, true), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+			} elseif ($format == 'urlencoded') {
+				parse_str($body, $urldecoded_body);
+				$decoded_body = print_r($urldecoded_body, true);
+			} else {
+				$decoded_body = $body;
+			}
+
+			// 根据解析后的数据结构，格式化请求体
+			$message .= "--------------------\n";
+			$message .= "WebHook 内容详情:\n";
+			if (!empty($decoded_body) && is_array($decoded_body) && isset($decoded_body['title']) && isset($decoded_body['type']) && isset($decoded_body['msg'])) {
+				$message .= "标题: {$decoded_body['title']}\n";
+				$message .= "类型: {$decoded_body['type']}\n";
+				$message .= "正文:\n";
+				$message .= $decoded_body['msg'] . "\n";
+			} else {
+				// 如果解析失败或不是预期的结构，则使用原始格式化的请求体
+				$message .= "原始内容:\n";
+				$message .= $body . "\n";
+			}
+			$message .= "--------------------\n\n";
+
 			$message .= "请登录WordPress后台查看更多详情。\n";
 			$message .= "日志页面: " . admin_url('tools.php?page=btwl-logs') . "\n";
 
