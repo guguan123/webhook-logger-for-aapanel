@@ -240,7 +240,6 @@ class BT_WebHook_Logger {
 	 */
 	public function display_logs_page() {
 		// 将 CPT 类型传递给模板，以便其查询
-		$post_type = $this->post_type;
 		require_once plugin_dir_path(__FILE__) . 'logs-page.php';
 	}
 

@@ -7,16 +7,13 @@
 // 防止直接访问此文件
 if (!defined('ABSPATH')) exit;
 
-// 注意：$post_type 变量是从主插件文件传递过来的局部变量，无需声明为 global。
-// $post_type; // 这一行被移除
-
 $page  = max(1, intval($_GET['paged'] ?? 1)); // 获取当前页码
 $limit = 20; // 每页显示数量
 $offset = ($page - 1) * $limit; // 计算偏移量
 
 // 使用 WP_Query 查询自定义文章类型
 $args = array(
-	'post_type'      => $post_type, // 现在 $post_type 会正确地从父作用域获取值
+	'post_type'      => $this->post_type,
 	'posts_per_page' => $limit,
 	'paged'          => $page,
 	'post_status'    => 'publish', // 只获取已发布的日志
