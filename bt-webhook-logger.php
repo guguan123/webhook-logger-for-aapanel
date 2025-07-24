@@ -125,7 +125,7 @@ class BT_WebHook_Logger {
 		$request_body = file_get_contents('php://input');
 		$content_type = $_SERVER['CONTENT_TYPE'] ?? '';
 		$data_format = 'raw'; // 默认格式为 'raw'
-		$request_ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
+		$request_ip = $_SERVER['REMOTE_ADDR'];
 		$request_time = current_time('mysql');
 
 		// 尝试解析 JSON 格式
