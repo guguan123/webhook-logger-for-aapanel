@@ -22,8 +22,6 @@ if (!defined('ABSPATH')) exit;
 
 /**
  * BT WebHook Logger 主类
- * 封装所有插件功能，避免全局命名空间污染。
- * 使用自定义文章类型 (CPT) 存储日志。
  */
 class BT_WebHook_Logger {
 
