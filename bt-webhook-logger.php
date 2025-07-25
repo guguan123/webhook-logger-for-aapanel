@@ -4,7 +4,7 @@
  * Plugin Name:         BaoTa WebHook Logger
  * Plugin URI:          https://github.com/guguan123/bt-webhook-logger
  * Description:         接收宝塔面板 WebHook 信息，并发送邮件通知
- * Version:             0.1.0
+ * Version:             0.1.1
  * Author:              GuGuan123
  * Author URI:          https://github.com/guguan123
  * License:             MIT
