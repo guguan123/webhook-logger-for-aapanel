@@ -1,10 +1,22 @@
 <?php
-/*
-Plugin Name: BT WebHook Logger (CPT Version)
-Description: 接收宝塔面板 WebHook，把请求体写入数据库，并在后台查看。使用自定义文章类型存储日志。
-Version:     2.2
-Author:      Your Name
-*/
+/**
+ * @wordpress-plugin
+ * Plugin Name:         BT WebHook Logger
+ * Plugin URI:          https://github.com/guguan123/bt-webhook-logger
+ * Description:         接收宝塔面板 WebHook 信息，并发送邮件通知
+ * Version:             0.1.0
+ * Author:              GuGuan123
+ * Author URI:          https://github.com/guguan123
+ * License:             MIT
+ * License URI:         https://choosealicense.com/licenses/mit/
+ * Text Domain:         bt-webhook-logger
+ * Requires at least:   6.0
+ * Tested up to:        6.8
+ * PHP Version:         8.2
+ * Requires PHP:        7.0
+ * Changelog:           https://github.com/guguan123/bt-webhook-logger/releases
+ * Support:             https://github.com/guguan123/bt-webhook-logger/issues
+ */
 
 if (!defined('ABSPATH')) exit;
 

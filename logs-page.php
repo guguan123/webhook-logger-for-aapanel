@@ -1,7 +1,7 @@
 <?php
 /**
  * logs-page.php
- * BT WebHook 日志展示页面 (CPT 版本)
+ * BT WebHook 日志展示页面
  */
 
 // 防止直接访问此文件
