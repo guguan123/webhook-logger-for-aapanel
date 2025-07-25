@@ -133,6 +133,7 @@ class BT_WebHook_Logger {
 			$decoded_body = json_decode($request_body, true);
 			if (json_last_error() === JSON_ERROR_NONE) {
 				$data_format = 'json';
+				$request_body = $decoded_body;
 			}
 		}
 		// 尝试解析 x-www-form-urlencoded 格式
@@ -140,6 +141,7 @@ class BT_WebHook_Logger {
 			parse_str($request_body, $decoded_body);
 			if (!empty($decoded_body)) {
 				$data_format = 'urlencoded';
+				$request_body = $decoded_body;
 			}
 		}
 		// 如果没有成功解析为 JSON 或 URL-encoded，则保持为 raw 格式
@@ -177,7 +179,7 @@ class BT_WebHook_Logger {
 	 *
 	 * @param string $ip 请求IP。
 	 * @param string $format 请求格式。
-	 * @param string $body 请求体内容。
+	 * @param string|array $body 请求体内容。
 	 * @param string $time 请求时间。
 	 */
 	private function send_email_notification($ip, $format, $body, $time) {
@@ -192,28 +194,18 @@ class BT_WebHook_Logger {
 			$message .= "来源 IP: " . $ip . "\n";
 			$message .= "格式: " . $format . "\n";
 
-
-			if ($format == 'json') {
-				$decoded_body = json_encode(json_decode($body, true), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-			} elseif ($format == 'urlencoded') {
-				parse_str($body, $urldecoded_body);
-				$decoded_body = print_r($urldecoded_body, true);
-			} else {
-				$decoded_body = $body;
-			}
-
 			// 根据解析后的数据结构，格式化请求体
 			$message .= "--------------------\n";
 			$message .= "WebHook 内容详情:\n";
-			if (!empty($decoded_body) && is_array($decoded_body) && isset($decoded_body['title']) && isset($decoded_body['type']) && isset($decoded_body['msg'])) {
-				$message .= "标题: {$decoded_body['title']}\n";
-				$message .= "类型: {$decoded_body['type']}\n";
+			if (!empty($body) && is_array($body) && isset($body['title']) && isset($body['type']) && isset($body['msg'])) {
+				$message .= "标题: {$body['title']}\n";
+				$message .= "类型: {$body['type']}\n";
 				$message .= "正文:\n";
-				$message .= $decoded_body['msg'] . "\n";
+				$message .= $body['msg'] . "\n";
 			} else {
 				// 如果解析失败或不是预期的结构，则使用原始格式化的请求体
 				$message .= "原始内容:\n";
-				$message .= $body . "\n";
+				$message .= print_r($body, true) . "\n";
 			}
 			$message .= "--------------------\n\n";
 

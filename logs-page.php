@@ -51,15 +51,8 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 			<?php foreach ($rows as $post):
 				// 从文章元数据中获取日志详情
 				$log_ip = get_post_meta($post->ID, '_btwl_ip', true);
-				$log_raw_body = get_post_meta($post->ID, '_btwl_body', true);
+				$log_body = print_r(get_post_meta($post->ID, '_btwl_body', true), true);
 				$log_format = get_post_meta($post->ID, '_btwl_format', true);
-				if ($log_format == 'json') {
-					$log_body = json_encode($log_raw_body, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-				} elseif ($log_format == 'urlencoded') {
-					$log_body = print_r($log_raw_body, true);
-				} else {
-					$log_body = $log_raw_body;
-				}
 			?>
 				<tr>
 					<td><?php echo esc_html($post->post_date); ?></td>
