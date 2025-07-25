@@ -54,8 +54,8 @@ class BT_WebHook_Logger {
 		// 注册 CPT
 		add_action('init', array($this, 'register_webhook_log_cpt'));
 
-		// 注册 WebHook 接收端
-		add_action('parse_request', array($this, 'handle_webhook'));
+		// 注册 WebHook 接收端 (REST API)
+		add_action('rest_api_init', array($this, 'register_webhook_rest_route')); // 修改点
 
 		// 注册后台菜单钩子
 		add_action('admin_menu', array($this, 'admin_menus'));
@@ -110,32 +110,55 @@ class BT_WebHook_Logger {
 	}
 
 	/**
-	 * 处理宝塔面板 WebHook 请求。
+	 * 注册 WebHook 的 REST API 路由。
 	 */
-	public function handle_webhook() {
-		// 仅在 ?btwebhook=1 且 POST 时进入
-		if (!isset($_GET['btwebhook']) || $_GET['btwebhook'] !== '1') {
-			return;
-		}
-		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-			return;
-		}
+	public function register_webhook_rest_route() {
+		register_rest_route(
+			'bt-webhook-logger/v1', // 命名空间
+			'/receive', // 路由
+			array(
+				'methods'             => 'POST', // 只允许 POST 请求
+				'callback'            => array($this, 'handle_webhook'), // 处理请求的回调函数
+				'permission_callback' => array($this, 'webhook_permission_check'), // 权限检查回调
+			)
+		);
+	}
 
-		// 获取配置的 access_key
+	/**
+	 * WebHook 权限检查。
+	 * 用于验证 access_key。
+	 *
+	 * @param WP_REST_Request $request 当前请求对象。
+	 * @return bool|WP_Error 如果验证通过返回 true，否则返回 WP_Error 对象。
+	 */
+	public function webhook_permission_check(WP_REST_Request $request) {
 		$configured_access_key = get_option($this->option_access_key);
 
 		// 如果配置了 access_key，则进行验证
 		if (!empty($configured_access_key)) {
-			$request_access_key = $_GET['access_key'] ?? '';
+			// 从请求参数中获取 access_key
+			$request_access_key = $request->get_param('access_key');
 			if ($request_access_key !== $configured_access_key) {
-				// 验证失败，返回403状态码并退出
-				http_response_code(403);
-				exit;
+				return new WP_Error(
+					'bt_webhook_auth_failed',
+					'Access Key 验证失败',
+					array('status' => 403)
+				);
 			}
 		}
+		return true; // 没有配置 access_key 或验证通过
+	}
 
-		$request_body = file_get_contents('php://input');
-		$content_type = $_SERVER['CONTENT_TYPE'] ?? '';
+	/**
+	 * 处理宝塔面板 WebHook 请求。
+	 *
+	 * @param WP_REST_Request $request 当前请求对象。
+	 * @return WP_REST_Response 返回 JSON 响应。
+	 */
+	public function handle_webhook(WP_REST_Request $request) {
+		// 从请求对象获取原始请求体和内容类型
+		$request_body = $request->get_body();
+		$content_type = $request->get_header('content-type');
 		$data_format = 'raw'; // 默认格式为 'raw'
 		$request_ip = $_SERVER['REMOTE_ADDR'];
 		$request_time = current_time('mysql');
@@ -181,9 +204,7 @@ class BT_WebHook_Logger {
 		}
 
 		// 返回宝塔面板需要的成功响应
-		header('Content-Type: application/json; charset=utf-8');
-		echo '{"code": 1}';
-		exit;
+		return new WP_REST_Response(array('code' => 1), 200);
 	}
 
 	/**

@@ -11,6 +11,13 @@ if (!defined('ABSPATH')) exit;
 $current_access_key = get_option($this->option_access_key, '');
 $current_enable_email = get_option($this->option_enable_email, '0'); // 默认为禁用
 $current_target_email = get_option($this->option_target_email, '');
+// 获取 REST API 的基础 URL
+$rest_api_base_url = get_rest_url(null, 'bt-webhook-logger/v1/receive');
+if (empty($current_access_key)) {
+	$webhook_url_example = $rest_api_base_url;
+} else {
+	$webhook_url_example = add_query_arg('access_key', $current_access_key, $rest_api_base_url);
+}
 ?>
 <div class="wrap">
 	<h1>BT WebHook 设置</h1>
@@ -23,7 +30,7 @@ $current_target_email = get_option($this->option_target_email, '');
 				<td>
 					<input type="text" id="btwl_access_key" name="btwl_access_key" value="<?php echo esc_attr($current_access_key); ?>" class="regular-text">
 					<p class="description">设置一个 Access Key 来保护你的 WebHook。留空表示不需要 Access Key（不推荐）。</p>
-					<p class="description">例如：`<?php echo esc_url(site_url('/?btwebhook=1&access_key=your_secret_key')); ?>`</p>
+					<p class="description">你的 WebHook 地址: <?php echo esc_url($webhook_url_example); ?></p>
 					<?php if (empty($current_access_key)) : ?>
 						<p class="description" style="color: red;">当前未设置 Access Key，WebHook 地址对所有请求开放，存在安全风险。</p>
 					<?php endif; ?>
