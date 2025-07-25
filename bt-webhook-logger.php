@@ -1,7 +1,7 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:         BT WebHook Logger
+ * Plugin Name:         BaoTa WebHook Logger
  * Plugin URI:          https://github.com/guguan123/bt-webhook-logger
  * Description:         接收宝塔面板 WebHook 信息，并发送邮件通知
  * Version:             0.1.0
@@ -318,24 +318,35 @@ class BT_WebHook_Logger {
 		if (isset($_POST['btwl_save_settings']) && current_user_can('manage_options')) {
 			check_admin_referer('btwl_settings_nonce');
 
-			// 保存 Access Key
-			$new_access_key = sanitize_text_field($_POST['btwl_access_key']);
-			update_option($this->option_access_key, $new_access_key);
+			// 校验输入的邮箱格式是否正确
+			if (is_email($_POST['btwl_target_email'])) {
+				// 保存 Access Key
+				$new_access_key = sanitize_text_field($_POST['btwl_access_key']);
+				update_option($this->option_access_key, $new_access_key);
 
-			// 保存邮件通知设置
-			$enable_email = isset($_POST['btwl_enable_email']) ? '1' : '0';
-			update_option($this->option_enable_email, $enable_email);
+				// 保存邮件通知设置
+				$enable_email = isset($_POST['btwl_enable_email']) ? '1' : '0';
+				update_option($this->option_enable_email, $enable_email);
 
-			$target_email = sanitize_email($_POST['btwl_target_email']);
-			update_option($this->option_target_email, $target_email);
+				$target_email = sanitize_email($_POST['btwl_target_email']);
+				update_option($this->option_target_email, $target_email);
 
-			// 添加管理通知
-			add_settings_error(
-				'bt-webhook-logger-messages',
-				'setting-save',
-				'设置已保存！',
-				'success'
-			);
+				// 添加管理通知
+				add_settings_error(
+					'bt-webhook-logger-messages',
+					'setting-save',
+					'设置已保存！',
+					'success'
+				);
+			} else {
+				// 报告错误
+				add_settings_error(
+					'bt-webhook-logger-messages',
+					'setting-save',
+					'邮箱格式不正确！',
+					'error'
+				);
+			}
 		}
 	}
 
