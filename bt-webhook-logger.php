@@ -69,7 +69,7 @@ class BT_WebHook_Logger {
 		// 注册管理页面脚本
 		add_action('admin_enqueue_scripts', function($hook) {
 			// 只在 BT WebHook 设置页加载
-			if ($hook == 'btwl-settings') {
+			if ($hook == 'settings_page_btwl-settings') {
 				wp_enqueue_script(
 					'btwl-settings-js',
 					plugins_url('assets/js/btwl-settings.js', __FILE__),
@@ -83,7 +83,7 @@ class BT_WebHook_Logger {
 					array(),
 					'0.1.0'
 				);
-			} elseif ($hook == 'btwl-logs') {
+			} elseif ($hook == 'tools_page_btwl-logs') {
 				wp_enqueue_style(
 					'btwl-logs',
 					plugins_url('assets/css/btwl-logs.css', __FILE__),
