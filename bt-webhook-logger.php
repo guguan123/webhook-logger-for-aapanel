@@ -28,25 +28,21 @@ class BT_WebHook_Logger {
 	/**
 	 * @var string 自定义文章类型 slug
 	 */
-	private $post_type = 'bt_webhook_log';
 	const POST_TYPE = 'bt_webhook_log';
 
 	/**
 	 * @var string 插件选项名称 for access_key
 	 */
-	private $option_access_key = 'btwl_access_key';
 	const OPTION_ACCESS_KEY = 'btwl_access_key';
 
 	/**
 	 * @var string 插件选项名称 for enable email notification
 	 */
-	private $option_enable_email = 'btwl_enable_email';
 	const OPTION_ENABLE_EMAIL = 'btwl_enable_email';
 
 	/**
 	 * @var string 插件选项名称 for target email address
 	 */
-	private $option_target_email = 'btwl_target_email';
 	const OPTION_TARGET_EMAIL = 'btwl_target_email';
 
 	/**
