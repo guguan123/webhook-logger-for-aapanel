@@ -29,7 +29,7 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 	<h1>BT WebHook 日志</h1>
 
 	<div class="btwl-toolbar">
-		<p>共 <?php echo $total; ?> 条记录</p>
+		<p>共 <?php echo esc_html($total); ?> 条记录</p>
 		<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
 		<form method="post" onsubmit="return confirm('确定要清空所有 WebHook 日志吗？此操作不可逆！');">
 			<?php wp_nonce_field('btwl_clear_logs_nonce'); ?>
@@ -77,14 +77,14 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 	$max = $log_query->max_num_pages;
 	if ($max > 1) {
 		echo '<div class="tablenav"><div class="tablenav-pages">';
-		echo paginate_links([
+		echo esc_html(paginate_links([
 			'base'    => add_query_arg('paged', '%#%'), // 分页链接的基础 URL
 			'format'  => '',
 			'current' => $page,
 			'total'   => $max,
 			'prev_text' => '&laquo;', // 上一页文本
 			'next_text' => '&raquo;', // 下一页文本
-		]);
+		]));
 		echo '</div></div>';
 	}
 	?>
