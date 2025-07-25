@@ -8,9 +8,9 @@
 if (!defined('ABSPATH')) exit;
 
 // 获取当前保存的 Access Key 和邮件设置
-$current_access_key = get_option($this->option_access_key, '');
-$current_enable_email = get_option($this->option_enable_email, '0'); // 默认为禁用
-$current_target_email = get_option($this->option_target_email, '');
+$current_access_key = get_option(self::OPTION_ACCESS_KEY, '');
+$current_enable_email = get_option(self::OPTION_ENABLE_EMAIL, '0'); // 默认为禁用
+$current_target_email = get_option(self::OPTION_TARGET_EMAIL, '');
 // 获取 REST API 的基础 URL
 $rest_api_base_url = get_rest_url(null, 'bt-webhook-logger/v1/receive');
 if (empty($current_access_key)) {
@@ -64,35 +64,3 @@ if (empty($current_access_key)) {
 		</p>
 	</form>
 </div>
-<script>
-	/**
-	 * 生成一个指定长度的随机字符串作为密钥
-	 * @returns {string} 随机密钥字符串
-	 */
-	function generateRandomKey() {
-		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		let result = '';
-		const charactersLength = characters.length;
-		for (let i = 0; i < 40; i++) { // 生成一个40位长的随机字符串
-			result += characters.charAt(Math.floor(Math.random() * charactersLength));
-		}
-		return result;
-	}
-</script>
-<style>
-	/* 表单表格的样式调整 */
-	.form-table th {
-		width: 150px; /* 调整标签列的宽度 */
-	}
-	.form-table input[type="text"],
-	.form-table input[type="email"] { /* 为 email 类型也添加样式 */
-		width: 100%; /* 输入框填充可用宽度 */
-		max-width: 400px; /* 设置最大宽度 */
-	}
-	/* 描述文本的样式 */
-	.btwl-settings-section p.description {
-		font-style: italic;
-		color: #666;
-		margin-top: 5px;
-	}
-</style>

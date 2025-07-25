@@ -13,7 +13,7 @@ $offset = ($page - 1) * $limit; // 计算偏移量
 
 // 使用 WP_Query 查询自定义文章类型
 $args = array(
-	'post_type'      => $this->post_type,
+	'post_type'      => self::POST_TYPE,
 	'posts_per_page' => $limit,
 	'paged'          => $page,
 	'post_status'    => 'publish', // 只获取已发布的日志
@@ -89,34 +89,3 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 	}
 	?>
 </div>
-<style>
-	/* 为日志内容区添加样式，提高可读性 */
-	.wrap table pre {
-		font-size: 13px;
-		line-height: 1.5;
-	}
-	/* 工具栏样式，用于布局日志总数和清空按钮 */
-	.btwl-toolbar {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 15px;
-	}
-	.btwl-toolbar p {
-		margin: 0;
-	}
-	/* 危险按钮样式，用于清空操作 */
-	.button-danger {
-		background: #dc3232;
-		border-color: #dc3232;
-		color: #fff;
-		box-shadow: 0 1px 0 rgba(0,0,0,.15);
-		text-shadow: 0 -1px 1px #b30000, 1px 0 1px #b30000, 0 1px 1px #b30000, -1px 0 1px #b30000;
-	}
-	.button-danger:hover,
-	.button-danger:focus {
-		background: #e35a5a;
-		border-color: #e35a5a;
-		color: #fff;
-	}
-</style>

@@ -29,21 +29,25 @@ class BT_WebHook_Logger {
 	 * @var string 自定义文章类型 slug
 	 */
 	private $post_type = 'bt_webhook_log';
+	const POST_TYPE = 'bt_webhook_log';
 
 	/**
 	 * @var string 插件选项名称 for access_key
 	 */
 	private $option_access_key = 'btwl_access_key';
+	const OPTION_ACCESS_KEY = 'btwl_access_key';
 
 	/**
 	 * @var string 插件选项名称 for enable email notification
 	 */
 	private $option_enable_email = 'btwl_enable_email';
+	const OPTION_ENABLE_EMAIL = 'btwl_enable_email';
 
 	/**
 	 * @var string 插件选项名称 for target email address
 	 */
 	private $option_target_email = 'btwl_target_email';
+	const OPTION_TARGET_EMAIL = 'btwl_target_email';
 
 	/**
 	 * 构造函数：初始化插件并注册所有钩子。
@@ -62,8 +66,43 @@ class BT_WebHook_Logger {
 		add_action('admin_init', array($this, 'handle_clear_logs'));
 		add_action('admin_init', array($this, 'handle_settings_save'));
 
-		// 确保管理通知能正常显示
-		//add_action('admin_notices', 'settings_errors');
+		// 注册管理页面脚本
+		add_action('admin_enqueue_scripts', function($hook) {
+			// 只在 BT WebHook 设置页加载
+			if ($hook == 'btwl-settings') {
+				wp_enqueue_script(
+					'btwl-settings-js',
+					plugins_url('assets/js/btwl-settings.js', __FILE__),
+					array(),
+					'0.1.0',
+					true
+				);
+				wp_enqueue_style(
+					'btwl-settings-css',
+					plugins_url('assets/css/btwl-settings.css', __FILE__),
+					array(),
+					'0.1.0'
+				);
+			} elseif ($hook == 'btwl-logs') {
+				wp_enqueue_style(
+					'btwl-logs',
+					plugins_url('assets/css/btwl-logs.css', __FILE__),
+					array(),
+					'0.1.0'
+				);
+			}
+		});
+
+		// 卸载插件后清理缓存数据
+		register_uninstall_hook(__FILE__, ['BT_WebHook_Logger', 'btwl_uninstall']);
+	}
+
+	// 删除日志和配置
+	public static function btwl_uninstall() {
+		delete_option(self::OPTION_ACCESS_KEY);
+		delete_option(self::OPTION_ENABLE_EMAIL);
+		delete_option(self::OPTION_TARGET_EMAIL);
+		self::delete_logs();
 	}
 
 	/**
@@ -104,7 +143,7 @@ class BT_WebHook_Logger {
 			'exclude_from_search' => true, // 不在站点搜索中显示
 		);
 
-		register_post_type($this->post_type, $args);
+		register_post_type(self::POST_TYPE, $args);
 	}
 
 	/**
@@ -130,7 +169,7 @@ class BT_WebHook_Logger {
 	 * @return bool|WP_Error 如果验证通过返回 true，否则返回 WP_Error 对象。
 	 */
 	public function webhook_permission_check(WP_REST_Request $request) {
-		$configured_access_key = get_option($this->option_access_key);
+		$configured_access_key = get_option(self::OPTION_ACCESS_KEY);
 
 		// 如果配置了 access_key，则进行验证
 		if (!empty($configured_access_key)) {
@@ -181,7 +220,7 @@ class BT_WebHook_Logger {
 
 		// 插入为自定义文章类型
 		$post_id = wp_insert_post(array(
-			'post_type'     => $this->post_type,
+			'post_type'     => self::POST_TYPE,
 			'post_title'    => 'WebHook Log ' . $request_time . ' from ' . $request_ip, // 更详细的标题
 			'post_status'   => 'publish',
 			'post_date'     => $request_time,
@@ -196,7 +235,7 @@ class BT_WebHook_Logger {
 		}
 
 		// 检查是否启用邮件通知
-		if (get_option($this->option_enable_email, '0') == 1) {
+		if (get_option(self::OPTION_ENABLE_EMAIL, '0') == 1) {
 			// 发送邮件通知（如果启用）
 			$this->send_email_notification($request_ip, $data_format, $request_body, $request_time);
 		}
@@ -214,7 +253,7 @@ class BT_WebHook_Logger {
 	 * @param string $time 请求时间。
 	 */
 	private function send_email_notification($ip, $format, $body, $time) {
-		$target_email = get_option($this->option_target_email, '');
+		$target_email = get_option(self::OPTION_TARGET_EMAIL, '');
 
 		// 检查目标邮箱是否有效
 		if (is_email($target_email)) {
@@ -276,28 +315,36 @@ class BT_WebHook_Logger {
 	}
 
 	/**
+	 * 删除所有日志
+	 */
+	private static function delete_logs() {
+		// 获取所有指定 CPT 的 ID 并逐一删除
+		$args = array(
+			'post_type'      => self::POST_TYPE,
+			'posts_per_page' => -1, // 获取所有日志
+			'fields'         => 'ids', // 只获取文章 ID
+			'post_status'    => 'any', // 包括所有状态的日志
+			'no_found_rows'  => true, // 优化查询，不计算总行数
+		);
+		$query = new WP_Query($args);
+
+		if ($query->have_posts()) {
+			foreach ($query->posts as $post_id) {
+				// 强制删除，绕过回收站
+				wp_delete_post($post_id, true);
+			}
+		}
+	}
+
+	/**
 	 * 处理清空日志的请求。
 	 */
 	public function handle_clear_logs() {
 		if (isset($_POST['btwl_clear_logs']) && current_user_can('manage_options')) {
 			check_admin_referer('btwl_clear_logs_nonce');
 
-			// 获取所有指定 CPT 的 ID 并逐一删除
-			$args = array(
-				'post_type'      => $this->post_type,
-				'posts_per_page' => -1, // 获取所有日志
-				'fields'         => 'ids', // 只获取文章 ID
-				'post_status'    => 'any', // 包括所有状态的日志
-				'no_found_rows'  => true, // 优化查询，不计算总行数
-			);
-			$query = new WP_Query($args);
-
-			if ($query->have_posts()) {
-				foreach ($query->posts as $post_id) {
-					// 强制删除，绕过回收站
-					wp_delete_post($post_id, true);
-				}
-			}
+			// 删除所有记录
+			self::delete_logs();
 
 			// 添加管理通知
 			add_settings_error(
@@ -320,14 +367,14 @@ class BT_WebHook_Logger {
 			if (is_email($_POST['btwl_target_email'])) {
 				// 保存 Access Key
 				$new_access_key = sanitize_text_field($_POST['btwl_access_key']);
-				update_option($this->option_access_key, $new_access_key);
+				update_option(self::OPTION_ACCESS_KEY, $new_access_key);
 
 				// 保存邮件通知设置
 				$enable_email = isset($_POST['btwl_enable_email']) ? '1' : '0';
-				update_option($this->option_enable_email, $enable_email);
+				update_option(self::OPTION_ENABLE_EMAIL, $enable_email);
 
 				$target_email = sanitize_email($_POST['btwl_target_email']);
-				update_option($this->option_target_email, $target_email);
+				update_option(self::OPTION_TARGET_EMAIL, $target_email);
 
 				// 添加管理通知
 				add_settings_error(
