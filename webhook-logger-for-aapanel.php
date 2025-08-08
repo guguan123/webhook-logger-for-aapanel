@@ -4,7 +4,7 @@
  * Plugin Name:         WebHook Logger for aaPanel
  * Plugin URI:          https://github.com/guguan123/webhook-logger-for-aapanel
  * Description:         Receive aaPanel Webhook information and send notifications via email
- * Version:             0.1.1
+ * Version:             0.1.2
  * Author:              GuGuan123
  * Author URI:          https://github.com/guguan123
  * License:             MIT
