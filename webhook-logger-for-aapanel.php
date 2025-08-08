@@ -45,11 +45,6 @@ class WebHook_Logger_for_aaPanel {
 	 * @var string 插件选项名称 for target email address
 	 */
 	const OPTION_TARGET_EMAIL = 'btwl_target_email';
-    
-    /**
-     * @var string 插件的文本域
-     */
-    const TEXT_DOMAIN = 'webhook-logger-for-aapanel';
 
 	/**
 	 * 构造函数：初始化插件并注册所有钩子。
@@ -224,11 +219,11 @@ class WebHook_Logger_for_aaPanel {
 		$post_id = wp_insert_post(array(
 			'post_type'     => self::POST_TYPE,
 			'post_title'    => sprintf(
-                /* translators: 1: request time, 2: request IP */
-                __('WebHook Log %1$s from %2$s', 'webhook-logger-for-aapanel'),
-                $request_time,
-                $request_ip
-            ),
+				/* translators: 1: request time, 2: request IP */
+				__('WebHook Log %1$s from %2$s', 'webhook-logger-for-aapanel'),
+				$request_time,
+				$request_ip
+			),
 			'post_status'   => 'publish',
 			'post_date'     => $request_time,
 			'post_date_gmt' => current_time('mysql', 1),
@@ -265,33 +260,39 @@ class WebHook_Logger_for_aaPanel {
 		// 检查目标邮箱是否有效
 		if (is_email($target_email)) {
 			$subject = sprintf(
-                /* translators: %s: request format */
-                __('BT WebHook Logger: New WebHook Received (%s)', 'webhook-logger-for-aapanel'),
-                $format
-            );
+				/* translators: %s: request format */
+				__('BT WebHook Logger: New WebHook Received (%s)', 'webhook-logger-for-aapanel'),
+				$format
+			);
 
-            // 使用 printf 而不是拼接字符串，以便更好地处理翻译
+			// 使用 printf 而不是拼接字符串，以便更好地处理翻译
 			$message = sprintf(
-                __("收到新的宝塔 WebHook 日志：\n\n", 'webhook-logger-for-aapanel') .
-                __("时间: %s\n", 'webhook-logger-for-aapanel') .
-                __("来源 IP: %s\n", 'webhook-logger-for-aapanel') .
-                __("格式: %s\n", 'webhook-logger-for-aapanel') .
+				__("收到新的宝塔 WebHook 日志：\n\n", 'webhook-logger-for-aapanel') .
+				/* translators: %s is the timestamp */
+				__("时间: %s\n", 'webhook-logger-for-aapanel') .
+				/* translators: %s is the source IP address */
+				__("来源 IP: %s\n", 'webhook-logger-for-aapanel') .
+				/* translators: %s is the format */
+				__("格式: %s\n", 'webhook-logger-for-aapanel') .
 				/* 根据解析后的数据结构，格式化请求体 */
-                __("--------------------\n", 'webhook-logger-for-aapanel') .
-                __("WebHook 内容详情:\n", 'webhook-logger-for-aapanel'),
-                $time,
-                $ip,
-                $format
-            );
+				__("--------------------\n", 'webhook-logger-for-aapanel') .
+				__("WebHook 内容详情:\n", 'webhook-logger-for-aapanel'),
+				$time,
+				$ip,
+				$format
+			);
 
 			if (!empty($body) && is_array($body) && isset($body['title']) && isset($body['type']) && isset($body['msg'])) {
 				$message .= sprintf(
-                    __("标题: %s\n", 'webhook-logger-for-aapanel') .
-                    __("类型: %s\n", 'webhook-logger-for-aapanel') .
-                    __("正文:\n", 'webhook-logger-for-aapanel'),
-                    $body['title'],
-                    $body['type']
-                );
+					/* translators: %s is the title of the log Email */
+					__("标题: %s\n", 'webhook-logger-for-aapanel') .
+					/* translators: %s is the format of the log Email */
+					__("类型: %s\n", 'webhook-logger-for-aapanel') .
+					/* translators: %s is log Email body */
+					__("正文:\n", 'webhook-logger-for-aapanel'),
+					$body['title'],
+					$body['type']
+				);
 				$message .= $body['msg'] . "\n";
 			} else {
 				// 如果解析失败或不是预期的结构，则使用原始格式化的请求体

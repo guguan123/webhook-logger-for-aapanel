@@ -31,7 +31,7 @@ if (empty($current_access_key)) {
 				<td>
 					<input type="text" id="btwl_access_key" name="btwl_access_key" value="<?php echo esc_attr($current_access_key); ?>" class="regular-text">
 					<p class="description"><?php echo esc_html(__('设置一个 Access Key 来保护你的 WebHook。留空表示不需要 Access Key（不推荐）。', 'webhook-logger-for-aapanel')); ?></p>
-					<p class="description"><?php printf(__('你的 WebHook 地址: %s', 'webhook-logger-for-aapanel'), esc_url($webhook_url_example)); ?></p>
+					<p class="description"><?php printf(/* translators: %s is the WebHook URL */ __('你的 WebHook 地址: %s', 'webhook-logger-for-aapanel'), esc_url($webhook_url_example)); ?></p>
 					<?php if (empty($current_access_key)) : ?>
 						<p class="description" style="color: red;"><?php echo esc_html(__('当前未设置 Access Key，WebHook 地址对所有请求开放，存在安全风险。', 'webhook-logger-for-aapanel')); ?></p>
 					<?php endif; ?>
