@@ -2,14 +2,14 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: WebHook Logger for aaPanel 0.1.1\n"
+"Project-Id-Version: WebHook Logger for aaPanel 0.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aapanel-webhook-wp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-08T17:37:47+00:00\n"
+"POT-Creation-Date: 2025-08-08T18:12:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: webhook-logger-for-aapanel\n"
@@ -37,4 +37,265 @@ msgstr ""
 #. Author URI of the plugin
 #: webhook-logger-for-aapanel.php
 msgid "https://github.com/guguan123"
+msgstr ""
+
+#: logs-page.php:29
+msgid "BT WebHook 日志"
+msgstr ""
+
+#. translators: %s: total number of logs
+#: logs-page.php:32
+#, php-format
+msgid "%s log"
+msgid_plural "%s logs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: logs-page.php:34
+msgid "确定要清空所有 WebHook 日志吗？此操作不可逆！"
+msgstr ""
+
+#: logs-page.php:36
+msgid "清空所有记录"
+msgstr ""
+
+#: logs-page.php:43
+msgid "时间"
+msgstr ""
+
+#: logs-page.php:44
+msgid "来源 IP"
+msgstr ""
+
+#: logs-page.php:45
+msgid "格式"
+msgstr ""
+
+#: logs-page.php:46
+msgid "请求体内容"
+msgstr ""
+
+#: logs-page.php:69
+msgid "暂无 WebHook 日志。"
+msgstr ""
+
+#: settings-page.php:24
+#: webhook-logger-for-aapanel.php:329
+#: webhook-logger-for-aapanel.php:330
+msgid "aaPanel WebHook 设置"
+msgstr ""
+
+#: settings-page.php:30
+msgid "Access Key"
+msgstr ""
+
+#: settings-page.php:33
+msgid "设置一个 Access Key 来保护你的 WebHook。留空表示不需要 Access Key（不推荐）。"
+msgstr ""
+
+#. translators: %s is the WebHook URL
+#: settings-page.php:34
+#, php-format
+msgid "你的 WebHook 地址: %s"
+msgstr ""
+
+#: settings-page.php:36
+msgid "当前未设置 Access Key，WebHook 地址对所有请求开放，存在安全风险。"
+msgstr ""
+
+#: settings-page.php:41
+msgid "邮件通知"
+msgstr ""
+
+#: settings-page.php:45
+msgid "启用 WebHook 邮件通知"
+msgstr ""
+
+#: settings-page.php:47
+msgid "勾选此项以在每次收到 WebHook 时发送邮件通知。"
+msgstr ""
+
+#: settings-page.php:51
+msgid "目标邮箱地址"
+msgstr ""
+
+#: settings-page.php:54
+msgid "接收 WebHook 通知邮件的邮箱地址。请确保您的 WordPress 已正确配置邮件发送服务。"
+msgstr ""
+
+#: settings-page.php:56
+msgid "邮件通知已启用，但目标邮箱地址无效，请检查。"
+msgstr ""
+
+#: settings-page.php:62
+msgid "保存设置"
+msgstr ""
+
+#: settings-page.php:64
+msgid "生成随机密钥"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:110
+#: webhook-logger-for-aapanel.php:111
+#: webhook-logger-for-aapanel.php:112
+msgid "WebHook 日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:113
+msgid "所有日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:114
+msgctxt "add new on admin bar"
+msgid "添加新日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:115
+msgid "添加新日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:116
+msgid "编辑日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:117
+msgid "新日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:118
+msgid "查看日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:119
+msgid "搜索日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:120
+msgid "没有找到日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:121
+msgid "回收站中没有找到日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:122
+msgid "父日志:"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:178
+msgid "Access Key 验证失败"
+msgstr ""
+
+#. translators: 1: request time, 2: request IP
+#: webhook-logger-for-aapanel.php:223
+#, php-format
+msgid "WebHook Log %1$s from %2$s"
+msgstr ""
+
+#. translators: %s: request format
+#: webhook-logger-for-aapanel.php:264
+#, php-format
+msgid "BT WebHook Logger: New WebHook Received (%s)"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:270
+msgid ""
+"收到新的宝塔 WebHook 日志：\n"
+"\n"
+""
+msgstr ""
+
+#. translators: %s is the timestamp
+#: webhook-logger-for-aapanel.php:272
+#, php-format
+msgid ""
+"时间: %s\n"
+""
+msgstr ""
+
+#. translators: %s is the source IP address
+#: webhook-logger-for-aapanel.php:274
+#, php-format
+msgid ""
+"来源 IP: %s\n"
+""
+msgstr ""
+
+#. translators: %s is the format
+#: webhook-logger-for-aapanel.php:276
+#, php-format
+msgid ""
+"格式: %s\n"
+""
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:278
+msgid ""
+"--------------------\n"
+""
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:279
+msgid ""
+"WebHook 内容详情:\n"
+""
+msgstr ""
+
+#. translators: %s is the title of the log Email
+#: webhook-logger-for-aapanel.php:288
+#, php-format
+msgid ""
+"标题: %s\n"
+""
+msgstr ""
+
+#. translators: %s is the format of the log Email
+#: webhook-logger-for-aapanel.php:290
+#, php-format
+msgid ""
+"类型: %s\n"
+""
+msgstr ""
+
+#. translators: %s is log Email body
+#: webhook-logger-for-aapanel.php:292
+msgid ""
+"正文:\n"
+""
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:299
+msgid "原始内容:"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:302
+msgid ""
+"--------------------\n"
+"\n"
+""
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:304
+msgid "请登录WordPress后台查看更多详情。"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:305
+msgid "日志页面:"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:319
+#: webhook-logger-for-aapanel.php:320
+msgid "aaPanel WebHook 日志"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:373
+msgid "WebHook 日志已清空！"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:403
+msgid "设置已保存！"
+msgstr ""
+
+#: webhook-logger-for-aapanel.php:411
+msgid "邮箱格式不正确！"
 msgstr ""
