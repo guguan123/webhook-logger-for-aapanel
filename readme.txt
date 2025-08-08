@@ -1,7 +1,7 @@
 === BaoTa WebHook Logger ===
 Contributors: GuGuan123
 Donate link: https://s1.imagehub.cc/images/2025/03/04/33128a3f3455b55b5c7321ee4c05527c.jpg
-Tags: 宝塔, BT, Security
+Tags: 宝塔, aaPanel, Security
 Requires at least: 6.0
 Tested up to: 6.8
 Stable tag: 0.1.1
@@ -12,7 +12,7 @@ License URI: https://opensource.org/licenses/MIT
 接收宝塔面板 WebHook 信息，并发送邮件通知
 
 == Description ==
-BaoTa WebHook Logger 是一款 WordPress 插件，旨在帮助您轻松接收和记录来自宝塔面板的 WebHook 通知。
+WebHook Logger for aaPanel 是一款 WordPress 插件，旨在帮助您轻松接收和记录来自宝塔面板的 WebHook 通知。
 该插件将收到的 WebHook 请求存储为 WordPress 后台的自定义日志，方便您随时查看。
 此外，它还支持通过邮件发送 WebHook 通知，确保您不会错过任何重要信息。
 
@@ -22,8 +22,8 @@ BaoTa WebHook Logger 是一款 WordPress 插件，旨在帮助您轻松接收和
 
 == Installation ==
 1.  在 WordPress 后台的“插件”页面激活插件。
-2.  激活后，您可以在“设置”菜单下找到“BT WebHook 设置”，在“工具”菜单下找到“BT WebHook 日志”。
-3.  进入“BT WebHook 设置”页面，配置您的 Access Key 和邮件通知选项。
+2.  激活后，您可以在“设置”菜单下找到“aaPanel WebHook 设置”，在“工具”菜单下找到“aaPanel WebHook 日志”。
+3.  进入“aaPanel WebHook 设置”页面，配置您的 Access Key 和邮件通知选项。
 4.  在宝塔面板中配置 WebHook 地址为插件设置页面中显示的地址（例如：https://您的域名/?rest_route=/bt-webhook-logger/v1/receive）。
 
 == Screenshots ==
@@ -54,4 +54,4 @@ BaoTa WebHook Logger 是一款 WordPress 插件，旨在帮助您轻松接收和
 Access Key 是一个安全密钥，用于验证 WebHook 请求的合法性。如果您设置了 Access Key，只有在 WebHook 请求中包含正确的 Access Key 时，插件才会处理该请求，从而防止未经授权的访问。建议您始终设置一个 Access Key。
 
 == Contact ==
-如果您有任何问题或建议，欢迎访问我的 GitHub 项目页面：[https://github.com/guguan123/bt-webhook-logger](https://github.com/guguan123/bt-webhook-logger)
+如果您有任何问题或建议，欢迎访问我的 GitHub 项目页面：[https://github.com/guguan123/webhook-logger-for-aapanel](https://github.com/guguan123/webhook-logger-for-aapanel)
