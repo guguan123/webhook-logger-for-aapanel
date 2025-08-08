@@ -1,7 +1,7 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:          WebHook Logger for aaPanel
+ * Plugin Name:         WebHook Logger for aaPanel
  * Plugin URI:          https://github.com/guguan123/webhook-logger-for-aapanel
  * Description:         接收宝塔面板 WebHook 信息，并发送邮件通知
  * Version:             0.1.1
@@ -18,6 +18,7 @@
  * Support:             https://github.com/guguan123/webhook-logger-for-aapanel/issues
  */
 
+// 防止直接访问此文件
 if (!defined('ABSPATH')) exit;
 
 /**
