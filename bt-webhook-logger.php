@@ -1,21 +1,21 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:         BaoTa WebHook Logger
- * Plugin URI:          https://github.com/guguan123/bt-webhook-logger
+ * Plugin Name:          WebHook Logger for aaPanel
+ * Plugin URI:          https://github.com/guguan123/webhook-logger-for-aapanel
  * Description:         接收宝塔面板 WebHook 信息，并发送邮件通知
  * Version:             0.1.1
  * Author:              GuGuan123
  * Author URI:          https://github.com/guguan123
  * License:             MIT
  * License URI:         https://choosealicense.com/licenses/mit/
- * Text Domain:         bt-webhook-logger
+ * Text Domain:         webhook-logger-for-aapanel
  * Requires at least:   6.0
  * Tested up to:        6.8
  * PHP Version:         8.2
  * Requires PHP:        7.0
- * Changelog:           https://github.com/guguan123/bt-webhook-logger/releases
- * Support:             https://github.com/guguan123/bt-webhook-logger/issues
+ * Changelog:           https://github.com/guguan123/webhook-logger-for-aapanel/releases
+ * Support:             https://github.com/guguan123/webhook-logger-for-aapanel/issues
  */
 
 if (!defined('ABSPATH')) exit;
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) exit;
 /**
  * BT WebHook Logger 主类
  */
-class BT_WebHook_Logger {
+class WebHook_Logger_for_aaPanel {
 
 	/**
 	 * @var string 自定义文章类型 slug
@@ -292,8 +292,8 @@ class BT_WebHook_Logger {
 		// 添加日志查看页面到“工具”菜单
 		add_submenu_page(
 			'tools.php',
-			'BT WebHook 日志',
-			'BT WebHook 日志',
+			'aaPanel WebHook 日志',
+			'aaPanel WebHook 日志',
 			'manage_options',
 			'btwl-logs',
 			array($this, 'display_logs_page') // 调用类方法
@@ -302,8 +302,8 @@ class BT_WebHook_Logger {
 		// 添加设置页面到“设置”菜单
 		add_submenu_page(
 			'options-general.php', // 父菜单 slug，通常是常规设置
-			'BT WebHook 设置',
-			'BT WebHook 设置',
+			'aaPanel WebHook 设置',
+			'aaPanel WebHook 设置',
 			'manage_options',
 			'btwl-settings',
 			array($this, 'display_settings_page') // 调用类方法
@@ -409,6 +409,6 @@ class BT_WebHook_Logger {
 }
 
 // 实例化插件类，启动插件功能
-if (class_exists('BT_WebHook_Logger')) {
-	new BT_WebHook_Logger();
+if (class_exists('WebHook_Logger_for_aaPanel')) {
+	new WebHook_Logger_for_aaPanel();
 }
