@@ -1,4 +1,4 @@
-=== BaoTa WebHook Logger ===
+=== Webhook Logger for aaPanel ===
 Contributors: GuGuan123
 Donate link: https://s1.imagehub.cc/images/2025/03/04/33128a3f3455b55b5c7321ee4c05527c.jpg
 Tags: 宝塔, aaPanel, Security
@@ -9,49 +9,56 @@ Requires PHP: 7.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-接收宝塔面板 WebHook 信息，并发送邮件通知
+Receive aaPanel Webhook information and send notifications via email.
 
 == Description ==
-WebHook Logger for aaPanel 是一款 WordPress 插件，旨在帮助您轻松接收和记录来自宝塔面板的 WebHook 通知。
-该插件将收到的 WebHook 请求存储为 WordPress 后台的自定义日志，方便您随时查看。
-此外，它还支持通过邮件发送 WebHook 通知，确保您不会错过任何重要信息。
+Webhook Logger for aaPanel is a WordPress plugin designed to help you easily receive and log Webhook notifications from the aaPanel control panel. This plugin stores the received Webhook requests as custom logs in the WordPress backend, allowing you to view them at any time. Additionally, it supports sending Webhook notifications via email, so you won't miss any important information.
 
-主要功能包括：
-* 邮件通知: 可选择启用邮件通知功能，在每次收到 WebHook 时，向指定的邮箱地址发送详细的通知邮件。
-* 日志管理: 提供后台页面，方便用户查看所有 WebHook 日志，并支持分页浏览和一键清空所有日志的功能。
+Key features include:
+
+
+Email Notifications: You can choose to enable email notifications to send a detailed notification email to a specified address every time a Webhook is received.
+
+
+Log Management: A backend page is provided for users to easily view all Webhook logs, with support for pagination and a one-click function to clear all logs.
 
 == Installation ==
-1.  在 WordPress 后台的“插件”页面激活插件。
-2.  激活后，您可以在“设置”菜单下找到“aaPanel WebHook 设置”，在“工具”菜单下找到“aaPanel WebHook 日志”。
-3.  进入“aaPanel WebHook 设置”页面，配置您的 Access Key 和邮件通知选项。
-4.  在宝塔面板中配置 WebHook 地址为插件设置页面中显示的地址（例如：https://您的域名/?rest_route=/bt-webhook-logger/v1/receive）。
+Activate the plugin on the "Plugins" page in your WordPress backend.
+
+After activation, you can find "aaPanel Webhook Settings" under the "Settings" menu and "aaPanel Webhook Logs" under the "Tools" menu.
+
+Go to the "aaPanel Webhook Settings" page to configure your Access Key and email notification options.
+
+In the aaPanel, configure the Webhook address to be the one shown on the plugin settings page (for example: https://www.google.com/search?q=https://yourdomain.com/%3Frest_route%3D/bt-webhook-logger/v1/receive).
 
 == Screenshots ==
-1. 设置页面
-![设置页面截图](https://s1.imagehub.cc/images/2025/07/25/b24ec480c37d59a8d2fa78510c870512.png)
-2. 日志列表页面
-![日志列表截图](https://s1.imagehub.cc/images/2025/07/25/4072bbbee30a63c8b55b3a1207e0ecd7.png)
-3. 邮件提醒
-![邮件内容截图](https://s1.imagehub.cc/images/2025/07/25/39f5dda8017037045e4094150b250682.png)
+![Settings Page](https://s1.imagehub.cc/images/2025/07/25/b24ec480c37d59a8d2fa78510c870512.png)
+
+![Log List Page](https://s1.imagehub.cc/images/2025/07/25/4072bbbee30a63c8b55b3a1207e0ecd7.png)
+
+![Email Alert](https://s1.imagehub.cc/images/2025/07/25/39f5dda8017037045e4094150b250682.png)
 
 == Changelog ==
 = 0.1.1 =
-* 改成使用REST API
+Changed to use REST API.
 
 = 0.1.0 =
-* 初始版本发布。
-* 支持接收和记录宝塔 WebHook。
-* 提供 Access Key 安全验证。
-* 集成邮件通知功能。
-* 实现后台日志查看和清空功能。
+Initial version released.
+
+Supports receiving and logging aaPanel Webhooks.
+
+Provides Access Key security verification.
+
+Integrated email notification feature.
+
+Implemented backend log viewing and clearing functionality.
 
 == Frequently Asked Questions ==
-= 我收不到邮件通知怎么办？ =
-请确保您在“BT WebHook 设置”中正确填写了目标邮箱地址并勾选了“启用 WebHook 邮件通知”。
-同时，请检查您的 WordPress 站点是否已正确配置邮件发送功能，例如是否安装了 SMTP 插件并进行了正确设置。
+= I'm not receiving email notifications, what should I do? =
+Please make sure you have correctly entered the target email address in "aaPanel Webhook Settings" and checked the "Enable Webhook Email Notifications" option. Additionally, check if your WordPress site has been configured correctly to send emails, for example, by installing and properly setting up an SMTP plugin.
 
-= Access Key 的作用是什么？ =
-Access Key 是一个安全密钥，用于验证 WebHook 请求的合法性。如果您设置了 Access Key，只有在 WebHook 请求中包含正确的 Access Key 时，插件才会处理该请求，从而防止未经授权的访问。建议您始终设置一个 Access Key。
+= What is the purpose of the Access Key? =
+The Access Key is a security key used to verify the legitimacy of Webhook requests. If you set an Access Key, the plugin will only process the request if it contains the correct key, which prevents unauthorized access. It is recommended that you always set an Access Key.
 
 == Contact ==
-如果您有任何问题或建议，欢迎访问我的 GitHub 项目页面：[https://github.com/guguan123/webhook-logger-for-aapanel](https://github.com/guguan123/webhook-logger-for-aapanel)
+If you have any questions or suggestions, please visit my GitHub project page: https://github.com/guguan123/webhook-logger-for-aapanel
