@@ -3,7 +3,7 @@
  * @wordpress-plugin
  * Plugin Name:         WebHook Logger for aaPanel
  * Plugin URI:          https://github.com/guguan123/webhook-logger-for-aapanel
- * Description:         接收宝塔面板 WebHook 信息，并发送邮件通知
+ * Description:         Receive aaPanel Webhook information and send notifications via email
  * Version:             0.1.1
  * Author:              GuGuan123
  * Author URI:          https://github.com/guguan123
