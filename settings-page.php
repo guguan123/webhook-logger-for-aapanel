@@ -19,51 +19,49 @@ if (empty($current_access_key)) {
 	$webhook_url_example = add_query_arg('access_key', $current_access_key, $rest_api_base_url);
 }
 
-// 定义文本域
-$text_domain = WebHook_Logger_for_aaPanel::TEXT_DOMAIN;
 ?>
 <div class="wrap">
-	<h1><?php echo esc_html(__('aaPanel WebHook 设置', $text_domain)); ?></h1>
+	<h1><?php echo esc_html(__('aaPanel WebHook 设置', 'webhook-logger-for-aapanel')); ?></h1>
 
 	<form method="post">
 		<?php wp_nonce_field('btwl_settings_nonce'); /* Nonce 字段用于安全验证 */ ?>
 		<table class="form-table">
 			<tr class="btwl-settings-section">
-				<th scope="row"><label for="btwl_access_key"><?php echo esc_html(__('Access Key', $text_domain)); ?></label></th>
+				<th scope="row"><label for="btwl_access_key"><?php echo esc_html(__('Access Key', 'webhook-logger-for-aapanel')); ?></label></th>
 				<td>
 					<input type="text" id="btwl_access_key" name="btwl_access_key" value="<?php echo esc_attr($current_access_key); ?>" class="regular-text">
-					<p class="description"><?php echo esc_html(__('设置一个 Access Key 来保护你的 WebHook。留空表示不需要 Access Key（不推荐）。', $text_domain)); ?></p>
-					<p class="description"><?php printf(__('你的 WebHook 地址: %s', $text_domain), esc_url($webhook_url_example)); ?></p>
+					<p class="description"><?php echo esc_html(__('设置一个 Access Key 来保护你的 WebHook。留空表示不需要 Access Key（不推荐）。', 'webhook-logger-for-aapanel')); ?></p>
+					<p class="description"><?php printf(__('你的 WebHook 地址: %s', 'webhook-logger-for-aapanel'), esc_url($webhook_url_example)); ?></p>
 					<?php if (empty($current_access_key)) : ?>
-						<p class="description" style="color: red;"><?php echo esc_html(__('当前未设置 Access Key，WebHook 地址对所有请求开放，存在安全风险。', $text_domain)); ?></p>
+						<p class="description" style="color: red;"><?php echo esc_html(__('当前未设置 Access Key，WebHook 地址对所有请求开放，存在安全风险。', 'webhook-logger-for-aapanel')); ?></p>
 					<?php endif; ?>
 				</td>
 			</tr>
 			<tr class="btwl-settings-section">
-				<th scope="row"><?php echo esc_html(__('邮件通知', $text_domain)); ?></th>
+				<th scope="row"><?php echo esc_html(__('邮件通知', 'webhook-logger-for-aapanel')); ?></th>
 				<td>
 					<label for="btwl_enable_email">
 						<input type="checkbox" id="btwl_enable_email" name="btwl_enable_email" value="1" <?php checked('1', $current_enable_email); ?>>
-						<?php echo esc_html(__('启用 WebHook 邮件通知', $text_domain)); ?>
+						<?php echo esc_html(__('启用 WebHook 邮件通知', 'webhook-logger-for-aapanel')); ?>
 					</label>
-					<p class="description"><?php echo esc_html(__('勾选此项以在每次收到 WebHook 时发送邮件通知。', $text_domain)); ?></p>
+					<p class="description"><?php echo esc_html(__('勾选此项以在每次收到 WebHook 时发送邮件通知。', 'webhook-logger-for-aapanel')); ?></p>
 				</td>
 			</tr>
 			<tr class="btwl-settings-section">
-				<th scope="row"><label for="btwl_target_email"><?php echo esc_html(__('目标邮箱地址', $text_domain)); ?></label></th>
+				<th scope="row"><label for="btwl_target_email"><?php echo esc_html(__('目标邮箱地址', 'webhook-logger-for-aapanel')); ?></label></th>
 				<td>
 					<input type="email" id="btwl_target_email" name="btwl_target_email" value="<?php echo esc_attr($current_target_email); ?>" class="regular-text">
-					<p class="description"><?php echo esc_html(__('接收 WebHook 通知邮件的邮箱地址。请确保您的 WordPress 已正确配置邮件发送服务。', $text_domain)); ?></p>
+					<p class="description"><?php echo esc_html(__('接收 WebHook 通知邮件的邮箱地址。请确保您的 WordPress 已正确配置邮件发送服务。', 'webhook-logger-for-aapanel')); ?></p>
 					<?php if (!empty($current_enable_email) && !is_email($current_target_email)) : ?>
-						<p class="description" style="color: red;"><?php echo esc_html(__('邮件通知已启用，但目标邮箱地址无效，请检查。', $text_domain)); ?></p>
+						<p class="description" style="color: red;"><?php echo esc_html(__('邮件通知已启用，但目标邮箱地址无效，请检查。', 'webhook-logger-for-aapanel')); ?></p>
 					<?php endif; ?>
 				</td>
 			</tr>
 		</table>
 		<p class="submit">
-			<input type="submit" name="btwl_save_settings" id="submit" class="button button-primary" value="<?php echo esc_attr(__('保存设置', $text_domain)); ?>">
+			<input type="submit" name="btwl_save_settings" id="submit" class="button button-primary" value="<?php echo esc_attr(__('保存设置', 'webhook-logger-for-aapanel')); ?>">
 			<!-- 按钮点击时调用 JavaScript 函数生成随机密钥 -->
-			<button type="button" class="button button-secondary" onclick="document.getElementById('btwl_access_key').value = generateRandomKey();"><?php echo esc_html(__('生成随机密钥', $text_domain)); ?></button>
+			<button type="button" class="button button-secondary" onclick="document.getElementById('btwl_access_key').value = generateRandomKey();"><?php echo esc_html(__('生成随机密钥', 'webhook-logger-for-aapanel')); ?></button>
 		</p>
 	</form>
 </div>

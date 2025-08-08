@@ -24,29 +24,26 @@ $log_query = new WP_Query($args);
 
 $rows = $log_query->posts; // 获取文章对象数组
 $total = $log_query->found_posts; // 获取总日志数（用于分页）
-
-// 定义文本域
-$text_domain = WebHook_Logger_for_aaPanel::TEXT_DOMAIN;
 ?>
 <div class="wrap">
-	<h1><?php echo esc_html(__('BT WebHook 日志', $text_domain)); ?></h1>
+	<h1><?php echo esc_html(__('BT WebHook 日志', 'webhook-logger-for-aapanel')); ?></h1>
 
 	<div class="btwl-toolbar">
-		<p><?php printf(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, $text_domain), esc_html($total)); ?></p>
+		<p><?php printf(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, 'webhook-logger-for-aapanel'), esc_html($total)); ?></p>
 			<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
-			<form method="post" onsubmit="return confirm('<?php echo esc_attr(__('确定要清空所有 WebHook 日志吗？此操作不可逆！', $text_domain)); ?>');">
+			<form method="post" onsubmit="return confirm('<?php echo esc_attr(__('确定要清空所有 WebHook 日志吗？此操作不可逆！', 'webhook-logger-for-aapanel')); ?>');">
 			<?php wp_nonce_field('btwl_clear_logs_nonce'); ?>
-			<input type="submit" name="btwl_clear_logs" class="button button-danger" value="<?php echo esc_attr(__('清空所有记录', $text_domain)); ?>">
+			<input type="submit" name="btwl_clear_logs" class="button button-danger" value="<?php echo esc_attr(__('清空所有记录', 'webhook-logger-for-aapanel')); ?>">
 		</form>
 	</div>
 
 	<table class="widefat fixed striped">
 		<thead>
 			<tr>
-				<th style="width: 150px;"><?php echo esc_html(__('时间', $text_domain)); ?></th>
-				<th style="width: 120px;"><?php echo esc_html(__('来源 IP', $text_domain)); ?></th>
-				<th style="width: 100px;"><?php echo esc_html(__('格式', $text_domain)); ?></th>
-				<th><?php echo esc_html(__('请求体内容', $text_domain)); ?></th>
+				<th style="width: 150px;"><?php echo esc_html(__('时间', 'webhook-logger-for-aapanel')); ?></th>
+				<th style="width: 120px;"><?php echo esc_html(__('来源 IP', 'webhook-logger-for-aapanel')); ?></th>
+				<th style="width: 100px;"><?php echo esc_html(__('格式', 'webhook-logger-for-aapanel')); ?></th>
+				<th><?php echo esc_html(__('请求体内容', 'webhook-logger-for-aapanel')); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -69,7 +66,7 @@ $text_domain = WebHook_Logger_for_aaPanel::TEXT_DOMAIN;
 			<?php endforeach; ?>
 		<?php else : ?>
 			<tr>
-				<td colspan="4"><?php echo esc_html(__('暂无 WebHook 日志。', $text_domain)); ?></td>
+				<td colspan="4"><?php echo esc_html(__('暂无 WebHook 日志。', 'webhook-logger-for-aapanel')); ?></td>
 			</tr>
 		<?php endif; ?>
 		</tbody>

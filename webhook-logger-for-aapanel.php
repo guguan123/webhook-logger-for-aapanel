@@ -55,9 +55,6 @@ class WebHook_Logger_for_aaPanel {
 	 * 构造函数：初始化插件并注册所有钩子。
 	 */
 	public function __construct() {
-        // 注册加载语言文件的钩子
-        add_action('plugins_loaded', array($this, 'load_textdomain'));
-
 		// 注册 CPT
 		add_action('init', array($this, 'register_webhook_log_cpt'));
 
@@ -102,17 +99,6 @@ class WebHook_Logger_for_aaPanel {
 		register_uninstall_hook(__FILE__, ['BT_WebHook_Logger', 'btwl_uninstall']);
 	}
 
-    /**
-     * 加载插件的文本域。
-     */
-    public function load_textdomain() {
-        load_plugin_textdomain(
-            self::TEXT_DOMAIN,
-            false,
-            dirname(plugin_basename(__FILE__)) . '/languages/'
-        );
-    }
-    
 	// 删除日志和配置
 	public static function btwl_uninstall() {
 		delete_option(self::OPTION_ACCESS_KEY);
@@ -126,19 +112,19 @@ class WebHook_Logger_for_aaPanel {
 	 */
 	public function register_webhook_log_cpt() {
 		$labels = array(
-			'name'          => __('WebHook 日志', self::TEXT_DOMAIN),
-			'singular_name' => __('WebHook 日志', self::TEXT_DOMAIN),
-			'menu_name'     => __('WebHook 日志', self::TEXT_DOMAIN),
-			'all_items'     => __('所有日志', self::TEXT_DOMAIN),
-			'add_new'       => _x('添加新日志', 'add new on admin bar', self::TEXT_DOMAIN),
-			'add_new_item'  => __('添加新日志', self::TEXT_DOMAIN),
-			'edit_item'     => __('编辑日志', self::TEXT_DOMAIN),
-			'new_item'      => __('新日志', self::TEXT_DOMAIN),
-			'view_item'     => __('查看日志', self::TEXT_DOMAIN),
-			'search_items'  => __('搜索日志', self::TEXT_DOMAIN),
-			'not_found'     => __('没有找到日志', self::TEXT_DOMAIN),
-			'not_found_in_trash' => __('回收站中没有找到日志', self::TEXT_DOMAIN),
-			'parent_item_colon' => __('父日志:', self::TEXT_DOMAIN),
+			'name'          => __('WebHook 日志', 'webhook-logger-for-aapanel'),
+			'singular_name' => __('WebHook 日志', 'webhook-logger-for-aapanel'),
+			'menu_name'     => __('WebHook 日志', 'webhook-logger-for-aapanel'),
+			'all_items'     => __('所有日志', 'webhook-logger-for-aapanel'),
+			'add_new'       => _x('添加新日志', 'add new on admin bar', 'webhook-logger-for-aapanel'),
+			'add_new_item'  => __('添加新日志', 'webhook-logger-for-aapanel'),
+			'edit_item'     => __('编辑日志', 'webhook-logger-for-aapanel'),
+			'new_item'      => __('新日志', 'webhook-logger-for-aapanel'),
+			'view_item'     => __('查看日志', 'webhook-logger-for-aapanel'),
+			'search_items'  => __('搜索日志', 'webhook-logger-for-aapanel'),
+			'not_found'     => __('没有找到日志', 'webhook-logger-for-aapanel'),
+			'not_found_in_trash' => __('回收站中没有找到日志', 'webhook-logger-for-aapanel'),
+			'parent_item_colon' => __('父日志:', 'webhook-logger-for-aapanel'),
 		);
 
 		$args = array(
@@ -194,7 +180,7 @@ class WebHook_Logger_for_aaPanel {
 			if ($request_access_key !== $configured_access_key) {
 				return new WP_Error(
 					'bt_webhook_auth_failed',
-					__('Access Key 验证失败', self::TEXT_DOMAIN),
+					__('Access Key 验证失败', 'webhook-logger-for-aapanel'),
 					array('status' => 403)
 				);
 			}
@@ -239,7 +225,7 @@ class WebHook_Logger_for_aaPanel {
 			'post_type'     => self::POST_TYPE,
 			'post_title'    => sprintf(
                 /* translators: 1: request time, 2: request IP */
-                __('WebHook Log %1$s from %2$s', self::TEXT_DOMAIN),
+                __('WebHook Log %1$s from %2$s', 'webhook-logger-for-aapanel'),
                 $request_time,
                 $request_ip
             ),
@@ -280,19 +266,19 @@ class WebHook_Logger_for_aaPanel {
 		if (is_email($target_email)) {
 			$subject = sprintf(
                 /* translators: %s: request format */
-                __('BT WebHook Logger: New WebHook Received (%s)', self::TEXT_DOMAIN),
+                __('BT WebHook Logger: New WebHook Received (%s)', 'webhook-logger-for-aapanel'),
                 $format
             );
 
             // 使用 printf 而不是拼接字符串，以便更好地处理翻译
 			$message = sprintf(
-                __("收到新的宝塔 WebHook 日志：\n\n", self::TEXT_DOMAIN) .
-                __("时间: %s\n", self::TEXT_DOMAIN) .
-                __("来源 IP: %s\n", self::TEXT_DOMAIN) .
-                __("格式: %s\n", self::TEXT_DOMAIN) .
+                __("收到新的宝塔 WebHook 日志：\n\n", 'webhook-logger-for-aapanel') .
+                __("时间: %s\n", 'webhook-logger-for-aapanel') .
+                __("来源 IP: %s\n", 'webhook-logger-for-aapanel') .
+                __("格式: %s\n", 'webhook-logger-for-aapanel') .
 				/* 根据解析后的数据结构，格式化请求体 */
-                __("--------------------\n", self::TEXT_DOMAIN) .
-                __("WebHook 内容详情:\n", self::TEXT_DOMAIN),
+                __("--------------------\n", 'webhook-logger-for-aapanel') .
+                __("WebHook 内容详情:\n", 'webhook-logger-for-aapanel'),
                 $time,
                 $ip,
                 $format
@@ -300,22 +286,22 @@ class WebHook_Logger_for_aaPanel {
 
 			if (!empty($body) && is_array($body) && isset($body['title']) && isset($body['type']) && isset($body['msg'])) {
 				$message .= sprintf(
-                    __("标题: %s\n", self::TEXT_DOMAIN) .
-                    __("类型: %s\n", self::TEXT_DOMAIN) .
-                    __("正文:\n", self::TEXT_DOMAIN),
+                    __("标题: %s\n", 'webhook-logger-for-aapanel') .
+                    __("类型: %s\n", 'webhook-logger-for-aapanel') .
+                    __("正文:\n", 'webhook-logger-for-aapanel'),
                     $body['title'],
                     $body['type']
                 );
 				$message .= $body['msg'] . "\n";
 			} else {
 				// 如果解析失败或不是预期的结构，则使用原始格式化的请求体
-				$message .= __('原始内容:', self::TEXT_DOMAIN) . "\n";
+				$message .= __('原始内容:', 'webhook-logger-for-aapanel') . "\n";
 				$message .= print_r($body, true) . "\n";
 			}
-			$message .= __("--------------------\n\n", self::TEXT_DOMAIN);
+			$message .= __("--------------------\n\n", 'webhook-logger-for-aapanel');
 
-			$message .= __('请登录WordPress后台查看更多详情。', self::TEXT_DOMAIN) . "\n";
-			$message .= __('日志页面:', self::TEXT_DOMAIN) . " " . admin_url('tools.php?page=btwl-logs') . "\n";
+			$message .= __('请登录WordPress后台查看更多详情。', 'webhook-logger-for-aapanel') . "\n";
+			$message .= __('日志页面:', 'webhook-logger-for-aapanel') . " " . admin_url('tools.php?page=btwl-logs') . "\n";
 
 			$headers = array('Content-Type: text/plain; charset=UTF-8');
 
@@ -329,8 +315,8 @@ class WebHook_Logger_for_aaPanel {
 	public function admin_menus() {
 		add_submenu_page(
 			'tools.php',
-			__('aaPanel WebHook 日志', self::TEXT_DOMAIN),
-			__('aaPanel WebHook 日志', self::TEXT_DOMAIN),
+			__('aaPanel WebHook 日志', 'webhook-logger-for-aapanel'),
+			__('aaPanel WebHook 日志', 'webhook-logger-for-aapanel'),
 			'manage_options',
 			'btwl-logs',
 			array($this, 'display_logs_page') // 调用类方法
@@ -339,8 +325,8 @@ class WebHook_Logger_for_aaPanel {
 		// 添加设置页面到“设置”菜单
 		add_submenu_page(
 			'options-general.php', // 父菜单 slug，通常是常规设置
-			__('aaPanel WebHook 设置', self::TEXT_DOMAIN),
-			__('aaPanel WebHook 设置', self::TEXT_DOMAIN),
+			__('aaPanel WebHook 设置', 'webhook-logger-for-aapanel'),
+			__('aaPanel WebHook 设置', 'webhook-logger-for-aapanel'),
 			'manage_options',
 			'btwl-settings',
 			array($this, 'display_settings_page') // 调用类方法
@@ -383,7 +369,7 @@ class WebHook_Logger_for_aaPanel {
 			add_settings_error(
 				'bt-webhook-logger-messages',
 				'log-cleared',
-				__('WebHook 日志已清空！', self::TEXT_DOMAIN),
+				__('WebHook 日志已清空！', 'webhook-logger-for-aapanel'),
 				'success'
 			);
 		}
@@ -413,7 +399,7 @@ class WebHook_Logger_for_aaPanel {
 				add_settings_error(
 					'bt-webhook-logger-messages',
 					'setting-save',
-					__('设置已保存！', self::TEXT_DOMAIN),
+					__('设置已保存！', 'webhook-logger-for-aapanel'),
 					'success'
 				);
 			} else {
@@ -421,7 +407,7 @@ class WebHook_Logger_for_aaPanel {
 				add_settings_error(
 					'bt-webhook-logger-messages',
 					'setting-save',
-					__('邮箱格式不正确！', self::TEXT_DOMAIN),
+					__('邮箱格式不正确！', 'webhook-logger-for-aapanel'),
 					'error'
 				);
 			}
