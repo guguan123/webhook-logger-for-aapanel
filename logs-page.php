@@ -24,26 +24,29 @@ $log_query = new WP_Query($args);
 
 $rows = $log_query->posts; // 获取文章对象数组
 $total = $log_query->found_posts; // 获取总日志数（用于分页）
+
+// 定义文本域
+$text_domain = WebHook_Logger_for_aaPanel::TEXT_DOMAIN;
 ?>
 <div class="wrap">
-	<h1>BT WebHook 日志</h1>
+	<h1><?php echo esc_html(__('BT WebHook 日志', $text_domain)); ?></h1>
 
 	<div class="btwl-toolbar">
-		<p>共 <?php echo esc_html($total); ?> 条记录</p>
-		<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
-		<form method="post" onsubmit="return confirm('确定要清空所有 WebHook 日志吗？此操作不可逆！');">
+		<p><?php printf(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, $text_domain), esc_html($total)); ?></p>
+			<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
+			<form method="post" onsubmit="return confirm('<?php echo esc_attr(__('确定要清空所有 WebHook 日志吗？此操作不可逆！', $text_domain)); ?>');">
 			<?php wp_nonce_field('btwl_clear_logs_nonce'); ?>
-			<input type="submit" name="btwl_clear_logs" class="button button-danger" value="清空所有记录">
+			<input type="submit" name="btwl_clear_logs" class="button button-danger" value="<?php echo esc_attr(__('清空所有记录', $text_domain)); ?>">
 		</form>
 	</div>
 
 	<table class="widefat fixed striped">
 		<thead>
 			<tr>
-				<th style="width: 150px;">时间</th>
-				<th style="width: 120px;">来源 IP</th>
-				<th style="width: 100px;">格式</th>
-				<th>请求体内容</th>
+				<th style="width: 150px;"><?php echo esc_html(__('时间', $text_domain)); ?></th>
+				<th style="width: 120px;"><?php echo esc_html(__('来源 IP', $text_domain)); ?></th>
+				<th style="width: 100px;"><?php echo esc_html(__('格式', $text_domain)); ?></th>
+				<th><?php echo esc_html(__('请求体内容', $text_domain)); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -66,7 +69,7 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 			<?php endforeach; ?>
 		<?php else : ?>
 			<tr>
-				<td colspan="4">暂无 WebHook 日志。</td>
+				<td colspan="4"><?php echo esc_html(__('暂无 WebHook 日志。', $text_domain)); ?></td>
 			</tr>
 		<?php endif; ?>
 		</tbody>
@@ -77,14 +80,14 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 	$max = $log_query->max_num_pages;
 	if ($max > 1) {
 		echo '<div class="tablenav"><div class="tablenav-pages">';
-		echo esc_html(paginate_links([
+		echo paginate_links([
 			'base'    => add_query_arg('paged', '%#%'), // 分页链接的基础 URL
 			'format'  => '',
 			'current' => $page,
 			'total'   => $max,
-			'prev_text' => '&laquo;', // 上一页文本
-			'next_text' => '&raquo;', // 下一页文本
-		]));
+			'prev_text' => esc_html('&laquo;'), // 上一页文本
+			'next_text' => esc_html('&raquo;'), // 下一页文本
+		]);
 		echo '</div></div>';
 	}
 	?>
