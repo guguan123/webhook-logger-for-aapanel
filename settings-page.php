@@ -20,7 +20,7 @@ if (empty($current_access_key)) {
 }
 ?>
 <div class="wrap">
-	<h1>BT WebHook 设置</h1>
+	<h1>aaPanel WebHook 设置</h1>
 
 	<form method="post">
 		<?php wp_nonce_field('btwl_settings_nonce'); // Nonce 字段用于安全验证 ?>
