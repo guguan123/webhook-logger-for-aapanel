@@ -39,6 +39,9 @@ In the aaPanel, configure the Webhook address to be the one shown on the plugin 
 ![Email Alert](https://s1.imagehub.cc/images/2025/07/25/39f5dda8017037045e4094150b250682.png)
 
 == Changelog ==
+= 0.1.2 =
+i18n support
+
 = 0.1.1 =
 Changed to use REST API.
 
