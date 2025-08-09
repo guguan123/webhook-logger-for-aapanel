@@ -64,34 +64,10 @@ class WebHook_Logger_for_aaPanel {
 		add_action('admin_init', array($this, 'handle_settings_save'));
 
 		// 注册管理页面脚本
-		add_action('admin_enqueue_scripts', function($hook) {
-			// 只在 BT WebHook 设置页加载
-			if ($hook == 'settings_page_btwl-settings') {
-				wp_enqueue_script(
-					'btwl-settings-js',
-					plugins_url('assets/js/btwl-settings.js', __FILE__),
-					array(),
-					'0.1.0',
-					true
-				);
-				wp_enqueue_style(
-					'btwl-settings-css',
-					plugins_url('assets/css/btwl-settings.css', __FILE__),
-					array(),
-					'0.1.0'
-				);
-			} elseif ($hook == 'tools_page_btwl-logs') {
-				wp_enqueue_style(
-					'btwl-logs',
-					plugins_url('assets/css/btwl-logs.css', __FILE__),
-					array(),
-					'0.1.0'
-				);
-			}
-		});
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
 		// 卸载插件后清理缓存数据
-		register_uninstall_hook(__FILE__, ['BT_WebHook_Logger', 'btwl_uninstall']);
+		register_uninstall_hook(__FILE__, array('WebHook_Logger_for_aaPanel', 'btwl_uninstall'));
 	}
 
 	// 删除日志和配置
@@ -194,7 +170,7 @@ class WebHook_Logger_for_aaPanel {
 		$request_body = $request->get_body();
 		$content_type = $request->get_header('content-type');
 		$data_format = 'raw'; // 默认格式为 'raw'
-		$request_ip = $_SERVER['REMOTE_ADDR'];
+		$request_ip = sanitize_text_field($_SERVER['REMOTE_ADDR']);
 		$request_time = current_time('mysql');
 
 		// 尝试解析 JSON 格式
@@ -429,6 +405,36 @@ class WebHook_Logger_for_aaPanel {
 	 */
 	public function display_settings_page() {
 		require_once plugin_dir_path(__FILE__) . 'settings-page.php';
+	}
+
+	/**
+	 * 在后台管理页面加载脚本和样式
+	 * @param string $hook 当前页面的钩子名称
+	 */
+	public function enqueue_admin_scripts($hook) {
+		// 只在 BT WebHook 设置页加载
+		if ($hook == 'settings_page_btwl-settings') {
+			wp_enqueue_script(
+				'btwl-settings-js',
+				plugins_url('assets/js/btwl-settings.js', __FILE__),
+				array(),
+				'0.1.0',
+				true
+			);
+			wp_enqueue_style(
+				'btwl-settings-css',
+				plugins_url('assets/css/btwl-settings.css', __FILE__),
+				array(),
+				'0.1.0'
+			);
+		} elseif ($hook == 'tools_page_btwl-logs') {
+			wp_enqueue_style(
+				'btwl-logs',
+				plugins_url('assets/css/btwl-logs.css', __FILE__),
+				array(),
+				'0.1.0'
+			);
+		}
 	}
 }
 

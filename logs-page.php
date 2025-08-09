@@ -1,7 +1,7 @@
 <?php
 /**
  * logs-page.php
- * BT WebHook 日志展示页面
+ * aaPanel WebHook 日志展示页面
  */
 
 // 防止直接访问此文件
@@ -24,12 +24,13 @@ $log_query = new WP_Query($args);
 
 $rows = $log_query->posts; // 获取文章对象数组
 $total = $log_query->found_posts; // 获取总日志数（用于分页）
+$max = $log_query->max_num_pages; // 获取总页数
 ?>
 <div class="wrap">
 	<h1><?php echo esc_html(__('BT WebHook 日志', 'webhook-logger-for-aapanel')); ?></h1>
 
 	<div class="btwl-toolbar">
-		<p><?php printf(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, 'webhook-logger-for-aapanel'), esc_html($total)); ?></p>
+		<p><?php printf(esc_html(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, 'webhook-logger-for-aapanel')), number_format_i18n($total)); ?></p>
 			<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
 			<form method="post" onsubmit="return confirm('<?php echo esc_attr(__('确定要清空所有 WebHook 日志吗？此操作不可逆！', 'webhook-logger-for-aapanel')); ?>');">
 			<?php wp_nonce_field('btwl_clear_logs_nonce'); ?>
@@ -40,10 +41,10 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 	<table class="widefat fixed striped">
 		<thead>
 			<tr>
-				<th style="width: 150px;"><?php echo esc_html(__('时间', 'webhook-logger-for-aapanel')); ?></th>
-				<th style="width: 120px;"><?php echo esc_html(__('来源 IP', 'webhook-logger-for-aapanel')); ?></th>
-				<th style="width: 100px;"><?php echo esc_html(__('格式', 'webhook-logger-for-aapanel')); ?></th>
-				<th><?php echo esc_html(__('请求体内容', 'webhook-logger-for-aapanel')); ?></th>
+				<th style="width: 150px;"><?php esc_html_e('时间', 'webhook-logger-for-aapanel'); ?></th>
+				<th style="width: 120px;"><?php esc_html_e('来源 IP', 'webhook-logger-for-aapanel'); ?></th>
+				<th style="width: 100px;"><?php esc_html_e('格式', 'webhook-logger-for-aapanel'); ?></th>
+				<th><?php esc_html_e('请求体内容', 'webhook-logger-for-aapanel'); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -66,26 +67,38 @@ $total = $log_query->found_posts; // 获取总日志数（用于分页）
 			<?php endforeach; ?>
 		<?php else : ?>
 			<tr>
-				<td colspan="4"><?php echo esc_html(__('暂无 WebHook 日志。', 'webhook-logger-for-aapanel')); ?></td>
+				<td colspan="4"><?php esc_html_e('暂无 WebHook 日志。', 'webhook-logger-for-aapanel'); ?></td>
 			</tr>
 		<?php endif; ?>
 		</tbody>
 	</table>
-	<?php
-	// 简单分页导航
-	// 使用 $log_query->max_num_pages 获取总页数
-	$max = $log_query->max_num_pages;
-	if ($max > 1) {
-		echo '<div class="tablenav"><div class="tablenav-pages">';
-		echo paginate_links([
-			'base'    => add_query_arg('paged', '%#%'), // 分页链接的基础 URL
-			'format'  => '',
-			'current' => $page,
-			'total'   => $max,
-			'prev_text' => esc_html('&laquo;'), // 上一页文本
-			'next_text' => esc_html('&raquo;'), // 下一页文本
-		]);
-		echo '</div></div>';
-	}
-	?>
+	<!-- 简单分页导航 -->
+	<?php if ($max > 1) : ?>
+		<div class="tablenav"><div class="tablenav-pages">
+			<?php echo wp_kses(
+				paginate_links(array(
+					'base'      => add_query_arg('paged', '%#%'), /* 分页链接的基础 URL */
+					'format'    => '',
+					'current'   => $page,
+					'total'     => $max,
+					'prev_text' => '&laquo;', /* 上一页文本 */
+					'next_text' => '&raquo;', /* 下一页文本 */
+				)),
+				/* 定义允许的 HTML 标签和属性 */
+				array(
+					'a'    => array(
+						'class' => array(),
+						'href'  => array()
+					),
+					'span' => array(
+						'class' => array(),
+						'aria-hidden' => array()
+					),
+					'div'  => array(
+						'class' => array()
+					)
+				)
+			); ?>
+		</div></div>
+	<?php endif; ?>
 </div>
