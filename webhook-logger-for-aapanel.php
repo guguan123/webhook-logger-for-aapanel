@@ -95,7 +95,7 @@ class WebHook_Logger_for_aaPanel {
 			'search_items'  => __('搜索日志', 'webhook-logger-for-aapanel'),
 			'not_found'     => __('没有找到日志', 'webhook-logger-for-aapanel'),
 			'not_found_in_trash' => __('回收站中没有找到日志', 'webhook-logger-for-aapanel'),
-			'parent_item_colon' => __('父日志:', 'webhook-logger-for-aapanel'),
+			'parent_item_colon'  => __('父日志:', 'webhook-logger-for-aapanel'),
 		);
 
 		$args = array(
