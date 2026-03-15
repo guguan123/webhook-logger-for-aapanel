@@ -1,6 +1,5 @@
 === Webhook Logger for aaPanel ===
 Contributors: GuGuan123
-Donate link: https://s1.imagehub.cc/images/2025/03/04/33128a3f3455b55b5c7321ee4c05527c.jpg
 Tags: 宝塔, aaPanel, Security
 Requires at least: 6.0
 Tested up to: 6.8
