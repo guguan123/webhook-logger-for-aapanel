@@ -4,16 +4,16 @@
  * Plugin Name:         WebHook Logger for aaPanel
  * Plugin URI:          https://github.com/guguan123/webhook-logger-for-aapanel
  * Description:         Receive aaPanel Webhook information and send notifications via email
- * Version:             0.1.3
+ * Version:             0.1.4
  * Author:              GuGuan123
- * Author URI:          https://github.com/guguan123
+ * Author URI:          https://guguan.us.kg
  * License:             MIT
  * License URI:         https://choosealicense.com/licenses/mit/
  * Text Domain:         webhook-logger-for-aapanel
  * Requires at least:   6.0
- * Tested up to:        6.8
- * PHP Version:         8.2
- * Requires PHP:        7.0
+ * Tested up to:        6.9
+ * PHP Version:         8.3
+ * Requires PHP:        8.0
  * Changelog:           https://github.com/guguan123/webhook-logger-for-aapanel/releases
  * Support:             https://github.com/guguan123/webhook-logger-for-aapanel/issues
  */
@@ -426,28 +426,28 @@ class WebHook_Logger_for_aaPanel {
 				'btwl-settings-js',
 				plugins_url('assets/js/btwl-settings.js', __FILE__),
 				array(),
-				'0.1.1',
+				'0.1.4',
 				true
 			);
 			wp_enqueue_style(
 				'btwl-settings-css',
 				plugins_url('assets/css/btwl-settings.css', __FILE__),
 				array(),
-				'0.1.1'
+				'0.1.4'
 			);
 		} elseif ($hook == 'tools_page_btwl-logs') {
 			wp_enqueue_script(
 				'btwl-logs-js',
 				plugins_url('assets/js/btwl-logs.js', __FILE__),
 				array('jquery'),
-				'0.1.1',
+				'0.1.4',
 				true
 			);
 			wp_enqueue_style(
 				'btwl-logs-css',
 				plugins_url('assets/css/btwl-logs.css', __FILE__),
 				array(),
-				'0.1.1'
+				'0.1.4'
 			);
 		}
 	}

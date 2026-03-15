@@ -12,15 +12,14 @@ $limit = 20; // 每页显示数量
 $offset = ($page - 1) * $limit; // 计算偏移量
 
 // 使用 WP_Query 查询自定义文章类型
-$args = array(
+$log_query = new WP_Query(array(
 	'post_type'      => self::POST_TYPE,
 	'posts_per_page' => $limit,
 	'paged'          => $page,
 	'post_status'    => 'publish', // 只获取已发布的日志
 	'order'          => 'DESC',
 	'orderby'        => 'date',
-);
-$log_query = new WP_Query($args);
+));
 
 $rows = $log_query->posts; // 获取文章对象数组
 $total = $log_query->found_posts; // 获取总日志数（用于分页）
