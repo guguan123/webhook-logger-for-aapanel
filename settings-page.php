@@ -25,6 +25,7 @@ if (empty($current_access_key)) {
 
 	<form method="post">
 		<?php wp_nonce_field('btwl_settings_nonce'); /* Nonce 字段用于安全验证 */ ?>
+
 		<table class="form-table">
 			<tr class="btwl-settings-section">
 				<th scope="row"><label for="btwl_access_key"><?php esc_html_e('Access Key', 'webhook-logger-for-aapanel'); ?></label></th>
@@ -37,6 +38,7 @@ if (empty($current_access_key)) {
 					<?php endif; ?>
 				</td>
 			</tr>
+
 			<tr class="btwl-settings-section">
 				<th scope="row"><?php esc_html_e('邮件通知', 'webhook-logger-for-aapanel'); ?></th>
 				<td>
@@ -47,6 +49,7 @@ if (empty($current_access_key)) {
 					<p class="description"><?php esc_html_e('勾选此项以在每次收到 WebHook 时发送邮件通知。', 'webhook-logger-for-aapanel'); ?></p>
 				</td>
 			</tr>
+
 			<tr class="btwl-settings-section" id="target_email_row">
 				<th scope="row"><label for="btwl_target_email"><?php esc_html_e('目标邮箱地址', 'webhook-logger-for-aapanel'); ?></label></th>
 				<td>
@@ -58,6 +61,7 @@ if (empty($current_access_key)) {
 				</td>
 			</tr>
 		</table>
+
 		<p class="submit">
 			<input type="submit" name="btwl_save_settings" id="submit" class="button button-primary" value="<?php echo esc_attr(__('保存设置', 'webhook-logger-for-aapanel')); ?>">
 			<!-- 按钮点击时调用 JavaScript 函数生成随机密钥 -->

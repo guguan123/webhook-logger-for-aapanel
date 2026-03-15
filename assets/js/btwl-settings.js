@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		const toggleEmailRow = () => {
 			if (enableEmailCheckbox.checked) {
 				// 显示
-				targetEmailRow.style.display = 'block';
+				targetEmailRow.style.display = 'table-row';
 			} else {
 				// 隐藏
 				targetEmailRow.style.display = 'none';

@@ -426,27 +426,32 @@ class WebHook_Logger_for_aaPanel {
 				'btwl-settings-js',
 				plugins_url('assets/js/btwl-settings.js', __FILE__),
 				array(),
-				'0.1.0',
+				'0.1.1',
 				true
 			);
 			wp_enqueue_style(
 				'btwl-settings-css',
 				plugins_url('assets/css/btwl-settings.css', __FILE__),
 				array(),
-				'0.1.0'
+				'0.1.1'
 			);
 		} elseif ($hook == 'tools_page_btwl-logs') {
+			wp_enqueue_script(
+				'btwl-logs-js',
+				plugins_url('assets/js/btwl-logs.js', __FILE__),
+				array('jquery'),
+				'0.1.1',
+				true
+			);
 			wp_enqueue_style(
-				'btwl-logs',
+				'btwl-logs-css',
 				plugins_url('assets/css/btwl-logs.css', __FILE__),
 				array(),
-				'0.1.0'
+				'0.1.1'
 			);
 		}
 	}
 }
 
-// 实例化插件类，启动插件功能
-if (class_exists('WebHook_Logger_for_aaPanel')) {
-	new WebHook_Logger_for_aaPanel();
-}
+// 启动插件
+if (class_exists('WebHook_Logger_for_aaPanel')) new WebHook_Logger_for_aaPanel();

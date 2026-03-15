@@ -26,82 +26,93 @@ $rows = $log_query->posts; // 获取文章对象数组
 $total = $log_query->found_posts; // 获取总日志数（用于分页）
 $max = $log_query->max_num_pages; // 获取总页数
 ?>
-<div class="wrap">
+<div class="wrap btwl-logs-wrapper">
 	<h1><?php echo esc_html(__('BT WebHook 日志', 'webhook-logger-for-aapanel')); ?></h1>
 
 	<div class="btwl-toolbar">
-		<p><?php printf(esc_html(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, 'webhook-logger-for-aapanel')), number_format_i18n($total)); ?></p>
-			<!-- 清空记录表单，包含 Nonce 字段和确认提示 -->
-			<form method="post" onsubmit="return confirm('<?php echo esc_attr(__('确定要清空所有 WebHook 日志吗？此操作不可逆！', 'webhook-logger-for-aapanel')); ?>');">
+		<div class="btwl-stats">
+			<span class="dashicons dashicons-list-view"></span>
+			<?php printf(esc_html(/* translators: %s: total number of logs */ _n('%s log', '%s logs', $total, 'webhook-logger-for-aapanel')), '<strong>' . number_format_i18n($total) . '</strong>'); ?>
+		</div>
+		<!-- 清空记录表单 -->
+		<form method="post" onsubmit="return confirm('<?php echo esc_attr(__('确定要清空所有 WebHook 日志吗？此操作不可逆！', 'webhook-logger-for-aapanel')); ?>');">
 			<?php wp_nonce_field('btwl_clear_logs_nonce'); ?>
-			<input type="submit" name="btwl_clear_logs" class="button button-danger" value="<?php echo esc_attr(__('清空所有记录', 'webhook-logger-for-aapanel')); ?>">
+			<button type="submit" name="btwl_clear_logs" class="button button-link-delete">
+				<span class="dashicons dashicons-trash"></span> <?php echo esc_html(__('清空所有记录', 'webhook-logger-for-aapanel')); ?>
+			</button>
 		</form>
 	</div>
 
-	<table class="widefat fixed striped posts">
-		<thead>
-			<tr>
-				<th class="column-primary" style="width: 150px;"><?php esc_html_e('时间', 'webhook-logger-for-aapanel'); ?></th>
-				<th style="width: 120px;"><?php esc_html_e('来源 IP', 'webhook-logger-for-aapanel'); ?></th>
-				<th style="width: 100px;"><?php esc_html_e('格式', 'webhook-logger-for-aapanel'); ?></th>
-				<th><?php esc_html_e('请求体内容', 'webhook-logger-for-aapanel'); ?></th>
-			</tr>
-		</thead>
-		<tbody>
+	<!-- 全新设计的自适应日志列表 -->
+	<div class="btwl-log-list">
+		<!-- 列表头部（仅桌面端显示） -->
+		<div class="btwl-log-header">
+			<div class="col-time"><?php esc_html_e('时间', 'webhook-logger-for-aapanel'); ?></div>
+			<div class="col-ip"><?php esc_html_e('来源 IP', 'webhook-logger-for-aapanel'); ?></div>
+			<div class="col-format"><?php esc_html_e('格式', 'webhook-logger-for-aapanel'); ?></div>
+			<div class="col-content"><?php esc_html_e('请求体内容', 'webhook-logger-for-aapanel'); ?></div>
+		</div>
+
+		<div class="btwl-log-body">
 		<?php if ($log_query->have_posts()) : ?>
 			<?php foreach ($rows as $post):
-				// 从文章元数据中获取日志详情
 				$log_ip = get_post_meta($post->ID, '_btwl_ip', true);
-				$log_body = print_r(get_post_meta($post->ID, '_btwl_body', true), true);
+				$log_body = get_post_meta($post->ID, '_btwl_body', true);
 				$log_format = get_post_meta($post->ID, '_btwl_format', true);
+				$display_body = is_array($log_body) ? wp_json_encode($log_body, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : $log_body;
 			?>
-				<tr>
-					<td class="column-primary" data-colname="<?php esc_attr_e('时间', 'webhook-logger-for-aapanel'); ?>">
-						<strong><?php echo esc_html($post->post_date); ?></strong>
-						<button type="button" class="toggle-row"><span class="screen-reader-text"><?php esc_html_e('显示详情', 'webhook-logger-for-aapanel'); ?></span></button>
-					</td>
-					<td data-colname="<?php esc_attr_e('来源 IP', 'webhook-logger-for-aapanel'); ?>"><?php echo esc_html($log_ip); ?></td>
-					<td data-colname="<?php esc_attr_e('格式', 'webhook-logger-for-aapanel'); ?>"><?php echo esc_html($log_format); ?></td>
-					<td data-colname="<?php esc_attr_e('请求体内容', 'webhook-logger-for-aapanel'); ?>">
-						<!-- 使用 pre 标签保留格式，并添加样式控制显示 -->
-						<pre style="white-space: pre-wrap; word-break: break-all; margin: 0; padding: 5px; background: #f9f9f9; border: 1px solid #eee; overflow: auto; max-height: 200px;"><?php echo esc_html($log_body); ?></pre>
-					</td>
-				</tr>
+				<div class="btwl-log-item">
+					<div class="btwl-log-row-summary">
+						<div class="col-time">
+							<span class="dashicons dashicons-clock mobile-only"></span>
+							<?php echo esc_html($post->post_date); ?>
+						</div>
+						<div class="col-ip">
+							<span class="mobile-label"><?php esc_html_e('来源 IP:', 'webhook-logger-for-aapanel'); ?></span>
+							<code><?php echo esc_html($log_ip); ?></code>
+						</div>
+						<div class="col-format">
+							<span class="mobile-label"><?php esc_html_e('格式:', 'webhook-logger-for-aapanel'); ?></span>
+							<span class="btwl-badge"><?php echo esc_html($log_format); ?></span>
+						</div>
+						<div class="col-toggle">
+							<button type="button" class="btwl-toggle-btn" title="<?php esc_attr_e('展开/收起详情', 'webhook-logger-for-aapanel'); ?>">
+								<span class="dashicons dashicons-arrow-down-alt2"></span>
+							</button>
+						</div>
+					</div>
+					<div class="btwl-log-details">
+						<div class="col-content">
+							<div class="content-header">
+								<span class="dashicons dashicons-editor-code"></span> <?php esc_html_e('请求体内容', 'webhook-logger-for-aapanel'); ?>
+							</div>
+							<pre class="log-body-content"><?php echo esc_html($display_body); ?></pre>
+						</div>
+					</div>
+				</div>
 			<?php endforeach; ?>
 		<?php else : ?>
-			<tr>
-				<td colspan="4"><?php esc_html_e('暂无 WebHook 日志。', 'webhook-logger-for-aapanel'); ?></td>
-			</tr>
+			<div class="btwl-no-logs">
+				<span class="dashicons dashicons-info"></span>
+				<?php esc_html_e('暂无 WebHook 日志。', 'webhook-logger-for-aapanel'); ?>
+			</div>
 		<?php endif; ?>
-		</tbody>
-	</table>
-	<!-- 简单分页导航 -->
+		</div>
+	</div>
+
+	<!-- 分页 -->
 	<?php if ($max > 1) : ?>
-		<div class="tablenav"><div class="tablenav-pages">
-			<?php echo wp_kses(
-				paginate_links(array(
-					'base'      => add_query_arg('paged', '%#%'), /* 分页链接的基础 URL */
+		<div class="tablenav bottom">
+			<div class="tablenav-pages">
+				<?php echo paginate_links(array(
+					'base'      => add_query_arg('paged', '%#%'),
 					'format'    => '',
 					'current'   => $page,
 					'total'     => $max,
-					'prev_text' => '&laquo;', /* 上一页文本 */
-					'next_text' => '&raquo;', /* 下一页文本 */
-				)),
-				/* 定义允许的 HTML 标签和属性 */
-				array(
-					'a'    => array(
-						'class' => array(),
-						'href'  => array()
-					),
-					'span' => array(
-						'class' => array(),
-						'aria-hidden' => array()
-					),
-					'div'  => array(
-						'class' => array()
-					)
-				)
-			); ?>
-		</div></div>
+					'prev_text' => '&laquo;',
+					'next_text' => '&raquo;',
+				)); ?>
+			</div>
+		</div>
 	<?php endif; ?>
 </div>

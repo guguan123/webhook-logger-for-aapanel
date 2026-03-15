@@ -1,65 +1,214 @@
-/* 为日志内容区添加样式，提高可读性 */
-.wrap table pre {
-	font-size: 13px;
-	line-height: 1.5;
+/* 基础容器 */
+.btwl-logs-wrapper {
+	max-width: 100%;
+	margin-right: 20px;
 }
 
-/* 工具栏样式，用于布局日志总数和清空按钮 */
+/* 工具栏 */
 .btwl-toolbar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 15px;
-	flex-wrap: wrap;
-	gap: 10px;
+	margin: 20px 0;
+	padding: 15px;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
 }
 
-.btwl-toolbar p {
+.btwl-stats {
+	font-size: 14px;
+	color: #50575e;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.btwl-stats .dashicons {
+	color: #2271b1;
+}
+
+/* 日志列表容器 */
+.btwl-log-list {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+/* 列表头部 (桌面端) */
+.btwl-log-header {
+	display: flex;
+	background: #f6f7f7;
+	border-bottom: 1px solid #ccd0d4;
+	font-weight: 600;
+	color: #2c3338;
+}
+
+.btwl-log-header > div,
+.btwl-log-row-summary > div {
+	padding: 12px 15px;
+}
+
+/* 列宽分配 */
+.col-time { width: 180px; flex-shrink: 0; }
+.col-ip { width: 150px; flex-shrink: 0; }
+.col-format { width: 100px; flex-shrink: 0; }
+.col-toggle { width: 50px; margin-left: auto; text-align: right; }
+.col-content { flex-grow: 1; }
+
+/* 每一行项目 */
+.btwl-log-item {
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.btwl-log-item:last-child {
+	border-bottom: none;
+}
+
+.btwl-log-row-summary {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: background 0.1s ease-in-out;
+}
+
+.btwl-log-row-summary:hover {
+	background: #f0f6fb;
+}
+
+/* 状态徽章 */
+.btwl-badge {
+	background: #e5e5e5;
+	color: #3c434a;
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+/* 展开按钮 */
+.btwl-toggle-btn {
+	background: none;
+	border: none;
+	padding: 0;
+	color: #72777c;
+	cursor: pointer;
+}
+
+/* 详细内容区域 */
+.btwl-log-details {
+	display: none;
+	background: #f9f9f9;
+	border-top: 1px solid #f0f0f1;
+	padding: 15px;
+}
+
+.btwl-log-item.is-open .btwl-log-details {
+	display: block;
+}
+
+.content-header {
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: #50575e;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+/* 日志文本框 */
+.log-body-content {
+	white-space: pre-wrap;
+	word-break: break-all;
 	margin: 0;
+	padding: 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	overflow: auto;
+	max-height: 400px;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #2c3338;
 }
 
-/* 危险按钮样式，用于清空操作 */
-.button-danger {
-	background: #dc3232;
-	border-color: #dc3232;
-	color: #fff;
-	box-shadow: 0 1px 0 rgba(0,0,0,.15);
-	text-shadow: 0 -1px 1px #b30000, 1px 0 1px #b30000, 0 1px 1px #b30000, -1px 0 1px #b30000;
+/* 移动端标签 (默认隐藏) */
+.mobile-label, .mobile-only {
+	display: none;
 }
 
-.button-danger:hover,
-.button-danger:focus {
-	background: #e35a5a;
-	border-color: #e35a5a;
-	color: #fff;
+/* 无记录提示 */
+.btwl-no-logs {
+	padding: 40px;
+	text-align: center;
+	color: #646970;
 }
 
-/* 移动端适配 */
+/* -------------------------------------------------------------------------- */
+/* 移动端适配 (782px 及以下)                                                  */
+/* -------------------------------------------------------------------------- */
 @media screen and (max-width: 782px) {
+	.btwl-log-header {
+		display: none; /* 隐藏桌面端表头 */
+	}
+
 	.btwl-toolbar {
 		flex-direction: column;
+		align-items: stretch;
+		gap: 15px;
+	}
+
+	.btwl-log-row-summary {
+		flex-direction: column;
 		align-items: flex-start;
+		padding: 15px;
+		position: relative;
 	}
 
-	.btwl-toolbar form {
-		width: 100%;
+	.btwl-log-row-summary > div {
+		width: 100% !important;
+		padding: 4px 0 !important;
 	}
 
-	.btwl-toolbar .button-danger {
+	.col-time {
+		font-weight: 600;
+		font-size: 15px;
+		color: #2271b1;
+		border-bottom: 1px solid #eee;
+		margin-bottom: 8px;
+		padding-bottom: 8px !important;
+	}
+
+	/* 显示移动端标签 */
+	.mobile-label {
+		display: inline-block;
+		width: 80px;
+		color: #646970;
+		font-size: 12px;
+	}
+	
+	.mobile-only {
+		display: inline-block;
+		margin-right: 5px;
+	}
+
+	.col-toggle {
+		position: absolute;
+		right: 15px;
+		top: 15px;
+		width: auto !important;
+	}
+
+	.log-body-content {
+		max-height: 300px;
+	}
+
+	/* 分页 */
+	.tablenav-pages {
 		width: 100%;
 		text-align: center;
-	}
-
-	/* 确保表格内的 pre 标签在移动端有合适的宽度和滚动 */
-	.widefat td pre {
-		max-width: 100%;
-		box-sizing: border-box;
-	}
-
-	/* 调整分页在移动端的显示 */
-	.tablenav .tablenav-pages {
-		margin-top: 10px;
 		float: none;
-		text-align: center;
 	}
 }
