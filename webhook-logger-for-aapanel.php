@@ -359,33 +359,41 @@ class WebHook_Logger_for_aaPanel {
 		if (isset($_POST['btwl_save_settings']) && current_user_can('manage_options')) {
 			check_admin_referer('btwl_settings_nonce');
 
+			// 保存 Access Key
+			update_option(self::OPTION_ACCESS_KEY, sanitize_text_field($_POST['btwl_access_key']));
+
+			// 保存邮件通知设置
+			$enable_email = $_POST['btwl_enable_email'] ?? '0';
+			update_option(self::OPTION_ENABLE_EMAIL, $enable_email);
+
 			// 校验输入的邮箱格式是否正确
-			if (is_email($_POST['btwl_target_email'])) {
-				// 保存 Access Key
-				$new_access_key = sanitize_text_field($_POST['btwl_access_key']);
-				update_option(self::OPTION_ACCESS_KEY, $new_access_key);
+			if ($enable_email == '1') {
+				if (is_email($_POST['btwl_target_email'])) {
+					update_option(self::OPTION_TARGET_EMAIL, sanitize_email($_POST['btwl_target_email']));
 
-				// 保存邮件通知设置
-				$enable_email = isset($_POST['btwl_enable_email']) ? '1' : '0';
-				update_option(self::OPTION_ENABLE_EMAIL, $enable_email);
-
-				$target_email = sanitize_email($_POST['btwl_target_email']);
-				update_option(self::OPTION_TARGET_EMAIL, $target_email);
-
-				// 添加管理通知
+					// 添加管理通知
+					add_settings_error(
+						'bt-webhook-logger-messages',
+						'setting-save',
+						__('设置已保存！', 'webhook-logger-for-aapanel'),
+						'success'
+					);
+				} else {
+					// 报告错误
+					add_settings_error(
+						'bt-webhook-logger-messages',
+						'setting-save',
+						__('邮箱格式不正确！', 'webhook-logger-for-aapanel'),
+						'error'
+					);
+				}
+			} elseif ($enable_email == '0') {
+				update_option(self::OPTION_TARGET_EMAIL, '');
 				add_settings_error(
 					'bt-webhook-logger-messages',
 					'setting-save',
 					__('设置已保存！', 'webhook-logger-for-aapanel'),
 					'success'
-				);
-			} else {
-				// 报告错误
-				add_settings_error(
-					'bt-webhook-logger-messages',
-					'setting-save',
-					__('邮箱格式不正确！', 'webhook-logger-for-aapanel'),
-					'error'
 				);
 			}
 		}

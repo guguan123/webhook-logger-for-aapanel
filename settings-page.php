@@ -47,7 +47,7 @@ if (empty($current_access_key)) {
 					<p class="description"><?php esc_html_e('勾选此项以在每次收到 WebHook 时发送邮件通知。', 'webhook-logger-for-aapanel'); ?></p>
 				</td>
 			</tr>
-			<tr class="btwl-settings-section">
+			<tr class="btwl-settings-section" id="target_email_row">
 				<th scope="row"><label for="btwl_target_email"><?php esc_html_e('目标邮箱地址', 'webhook-logger-for-aapanel'); ?></label></th>
 				<td>
 					<input type="email" id="btwl_target_email" name="btwl_target_email" value="<?php echo esc_attr($current_target_email); ?>" class="regular-text">

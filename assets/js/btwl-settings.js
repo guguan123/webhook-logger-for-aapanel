@@ -20,4 +20,22 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (input) input.value = generateRandomKey();
 		});
 	}
+
+	// 控制邮箱项显示/隐藏的逻辑
+	const enableEmailCheckbox = document.getElementById('btwl_enable_email');
+	const targetEmailRow = document.getElementById('target_email_row');
+	if (enableEmailCheckbox && targetEmailRow) {
+		// 定义切换函数
+		const toggleEmailRow = () => {
+			if (enableEmailCheckbox.checked) {
+				// 显示
+				targetEmailRow.style.display = 'block';
+			} else {
+				// 隐藏
+				targetEmailRow.style.display = 'none';
+			}
+		};
+		toggleEmailRow();
+		enableEmailCheckbox.addEventListener('change', toggleEmailRow);
+	}
 });
