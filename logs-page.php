@@ -38,10 +38,10 @@ $max = $log_query->max_num_pages; // 获取总页数
 		</form>
 	</div>
 
-	<table class="widefat fixed striped">
+	<table class="widefat fixed striped posts">
 		<thead>
 			<tr>
-				<th style="width: 150px;"><?php esc_html_e('时间', 'webhook-logger-for-aapanel'); ?></th>
+				<th class="column-primary" style="width: 150px;"><?php esc_html_e('时间', 'webhook-logger-for-aapanel'); ?></th>
 				<th style="width: 120px;"><?php esc_html_e('来源 IP', 'webhook-logger-for-aapanel'); ?></th>
 				<th style="width: 100px;"><?php esc_html_e('格式', 'webhook-logger-for-aapanel'); ?></th>
 				<th><?php esc_html_e('请求体内容', 'webhook-logger-for-aapanel'); ?></th>
@@ -56,10 +56,13 @@ $max = $log_query->max_num_pages; // 获取总页数
 				$log_format = get_post_meta($post->ID, '_btwl_format', true);
 			?>
 				<tr>
-					<td><?php echo esc_html($post->post_date); ?></td>
-					<td><?php echo esc_html($log_ip); ?></td>
-					<td><?php echo esc_html($log_format); ?></td>
-					<td>
+					<td class="column-primary" data-colname="<?php esc_attr_e('时间', 'webhook-logger-for-aapanel'); ?>">
+						<strong><?php echo esc_html($post->post_date); ?></strong>
+						<button type="button" class="toggle-row"><span class="screen-reader-text"><?php esc_html_e('显示详情', 'webhook-logger-for-aapanel'); ?></span></button>
+					</td>
+					<td data-colname="<?php esc_attr_e('来源 IP', 'webhook-logger-for-aapanel'); ?>"><?php echo esc_html($log_ip); ?></td>
+					<td data-colname="<?php esc_attr_e('格式', 'webhook-logger-for-aapanel'); ?>"><?php echo esc_html($log_format); ?></td>
+					<td data-colname="<?php esc_attr_e('请求体内容', 'webhook-logger-for-aapanel'); ?>">
 						<!-- 使用 pre 标签保留格式，并添加样式控制显示 -->
 						<pre style="white-space: pre-wrap; word-break: break-all; margin: 0; padding: 5px; background: #f9f9f9; border: 1px solid #eee; overflow: auto; max-height: 200px;"><?php echo esc_html($log_body); ?></pre>
 					</td>

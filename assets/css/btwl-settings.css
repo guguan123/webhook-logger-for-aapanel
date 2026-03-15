@@ -1,13 +1,49 @@
+/* 设置页面的基本样式 */
 .form-table th {
-	width: 150px;
+	width: 200px;
 }
-.form-table input[type="text"],
-.form-table input[type="email"] {
+
+.form-table input.regular-text {
 	width: 100%;
 	max-width: 400px;
 }
+
 .btwl-settings-section p.description {
 	font-style: italic;
 	color: #666;
 	margin-top: 5px;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 782px) {
+	/* 让表格头部和内容垂直堆叠，这是 WordPress 的默认行为，但我们可以微调 */
+	.form-table th,
+	.form-table td {
+		display: block;
+		width: 100% !important;
+		padding: 10px 0 !important;
+	}
+
+	.form-table th {
+		padding-bottom: 0 !important;
+	}
+
+	/* 让输入框在手机上更美观 */
+	.form-table input.regular-text {
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	/* 调整按钮布局 */
+	.submit {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.submit .button {
+		width: 100%;
+		text-align: center;
+		margin: 0 !important; /* 清除 WordPress 默认的边距 */
+	}
 }

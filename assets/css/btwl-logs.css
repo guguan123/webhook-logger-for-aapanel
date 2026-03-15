@@ -3,16 +3,21 @@
 	font-size: 13px;
 	line-height: 1.5;
 }
+
 /* 工具栏样式，用于布局日志总数和清空按钮 */
 .btwl-toolbar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 15px;
+	flex-wrap: wrap;
+	gap: 10px;
 }
+
 .btwl-toolbar p {
 	margin: 0;
 }
+
 /* 危险按钮样式，用于清空操作 */
 .button-danger {
 	background: #dc3232;
@@ -21,9 +26,40 @@
 	box-shadow: 0 1px 0 rgba(0,0,0,.15);
 	text-shadow: 0 -1px 1px #b30000, 1px 0 1px #b30000, 0 1px 1px #b30000, -1px 0 1px #b30000;
 }
+
 .button-danger:hover,
 .button-danger:focus {
 	background: #e35a5a;
 	border-color: #e35a5a;
 	color: #fff;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 782px) {
+	.btwl-toolbar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.btwl-toolbar form {
+		width: 100%;
+	}
+
+	.btwl-toolbar .button-danger {
+		width: 100%;
+		text-align: center;
+	}
+
+	/* 确保表格内的 pre 标签在移动端有合适的宽度和滚动 */
+	.widefat td pre {
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	/* 调整分页在移动端的显示 */
+	.tablenav .tablenav-pages {
+		margin-top: 10px;
+		float: none;
+		text-align: center;
+	}
 }
