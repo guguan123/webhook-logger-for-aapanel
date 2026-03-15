@@ -2,9 +2,9 @@
 Contributors: GuGuan123
 Tags: 宝塔, aaPanel, Security
 Requires at least: 6.0
-Tested up to: 6.8
-Stable tag: 0.1.3
-Requires PHP: 7.0
+Tested up to: 6.9
+Stable tag: 0.1.4
+Requires PHP: 8.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 

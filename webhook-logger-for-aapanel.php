@@ -10,12 +10,7 @@
  * License:             MIT
  * License URI:         https://choosealicense.com/licenses/mit/
  * Text Domain:         webhook-logger-for-aapanel
- * Requires at least:   6.0
- * Tested up to:        6.9
- * PHP Version:         8.3
  * Requires PHP:        8.0
- * Changelog:           https://github.com/guguan123/webhook-logger-for-aapanel/releases
- * Support:             https://github.com/guguan123/webhook-logger-for-aapanel/issues
  */
 
 // 防止直接访问此文件
