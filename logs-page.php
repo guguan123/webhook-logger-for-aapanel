@@ -42,7 +42,6 @@ $max = $log_query->max_num_pages; // 获取总页数
 		</form>
 	</div>
 
-	<!-- 全新设计的自适应日志列表 -->
 	<div class="btwl-log-list">
 		<!-- 列表头部（仅桌面端显示） -->
 		<div class="btwl-log-header">

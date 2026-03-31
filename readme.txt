@@ -31,11 +31,11 @@ Go to the "aaPanel Webhook Settings" page to configure your Access Key and email
 In the aaPanel, configure the Webhook address to be the one shown on the plugin settings page (for example: https://www.google.com/search?q=https://yourdomain.com/%3Frest_route%3D/bt-webhook-logger/v1/receive).
 
 == Screenshots ==
-![Settings Page](https://s1.imagehub.cc/images/2025/07/25/b24ec480c37d59a8d2fa78510c870512.png)
+https://s1.imagehub.cc/images/2025/07/25/b24ec480c37d59a8d2fa78510c870512.png
 
-![Log List Page](https://s1.imagehub.cc/images/2025/07/25/4072bbbee30a63c8b55b3a1207e0ecd7.png)
+https://s1.imagehub.cc/images/2025/07/25/4072bbbee30a63c8b55b3a1207e0ecd7.png
 
-![Email Alert](https://s1.imagehub.cc/images/2025/07/25/39f5dda8017037045e4094150b250682.png)
+https://s1.imagehub.cc/images/2025/07/25/39f5dda8017037045e4094150b250682.png
 
 == Changelog ==
 = 0.1.2 =
