@@ -38,6 +38,9 @@ https://s1.imagehub.cc/images/2025/07/25/4072bbbee30a63c8b55b3a1207e0ecd7.png
 https://s1.imagehub.cc/images/2025/07/25/39f5dda8017037045e4094150b250682.png
 
 == Changelog ==
+= 0.1.4 =
+Adapt to mobile
+
 = 0.1.2 =
 i18n support
 
